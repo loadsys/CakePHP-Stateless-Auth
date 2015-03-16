@@ -16,7 +16,7 @@ App::uses('Component', 'Controller');
  * Provides stateless authentication via `Bearer` header tokens and
  * authorization using the app's Privilege/Permission system.
  *
- * @package app.Controller.Component
+ * @package StatelessAuth.Controller.Component
  */
 class StatelessAuthComponent extends Component {
 

@@ -8,7 +8,7 @@
  * is set to the resulting User automatically to make it available to the
  * rest of the Cake app like "normal".
  *
- * @package app.Controller.Component.Auth
+ * @package StatelessAuth.Controller.Component.Auth
  */
 App::uses('FormAuthenticate', 'Controller/Component/Auth');
 

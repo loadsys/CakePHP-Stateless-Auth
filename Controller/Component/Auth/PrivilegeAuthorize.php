@@ -3,7 +3,7 @@
  * Provides methods to check access control information for the User that
  * was authenticated on the current request.
  *
- * @package		  app.Controller.Component.Auth
+ * @package		  StatelessAuth.Controller.Component.Auth
  */
 App::uses('BaseAuthorize', 'Controller/Component/Auth');
 
