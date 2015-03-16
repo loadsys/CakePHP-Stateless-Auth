@@ -102,7 +102,7 @@ class TokenLoginLogoutAuthenticate extends TokenAuthenticate {
 	 * @return Model|false
 	 */
 	public function getModel() {
-		return ClassRegistry::init($this->settings['userModel']);
+		return parent::getModel();
 	}
 
 	/**
@@ -114,8 +114,7 @@ class TokenLoginLogoutAuthenticate extends TokenAuthenticate {
 	 * @return string The (possibly empty) string representing the provided auth token.
 	 */
 	public function getToken(CakeRequest $request) {
-		$token = str_ireplace('Bearer ', '', $request->header('Authorization'));
-		return $token;
+		return parent::getToken($request);
 	}
 
 	/**
