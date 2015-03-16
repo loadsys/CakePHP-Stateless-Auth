@@ -17,6 +17,20 @@ App::uses('FormAuthenticate', 'Controller/Component/Auth');
  */
 class TokenAuthenticate extends FormAuthenticate {
 
+	public $settings = array(
+		'fields' => array(
+			'username' => 'username',
+			'password' => 'password',
+			'token' => 'token',
+		),
+		'userModel' => 'User',
+		'userFields' => null,
+		'scope' => array(),
+		'recursive' => 0,
+		'contain' => null,
+		'passwordHasher' => 'Simple'
+	);
+
 	/**
 	 * Authenticate a user based on the request information.
 	 *
@@ -86,13 +100,11 @@ class TokenAuthenticate extends FormAuthenticate {
 	public function getUser(CakeRequest $request) {
 		$token = $this->getToken($request);
 		$UserModel = $this->getModel();
-		$user = $UserModel->findForToken($token);
+		$user = $this->getUserForToken($UserModel, $token);
 
 		if (empty($user['User'])) {
 			throw new UnauthorizedJsonApiException('Missing, invalid or expired token present in request. Include an HTTP_AUTHORIZATION header, or please login to obtain a token.');
 		}
-
-		$UserModel->updateLastLogin($user['User']['id']);
 		return (!empty($user['User']) ? $user['User'] : false);
 	}
 
@@ -116,6 +128,26 @@ class TokenAuthenticate extends FormAuthenticate {
 	public function getToken(CakeRequest $request) {
 		$token = str_ireplace('Bearer ', '', $request->header('Authorization'));
 		return $token;
+	}
+
+	/**
+	 * find a user for the token
+	 *
+	 * @param  [type] $userModel [description]
+	 * @param  [type] $token     [description]
+	 * @return [type]            [description]
+	 */
+	public function getUserForToken($userModel, $token) {
+		$options = array(
+			'conditions' => array(
+				$this->settings['userModel'] . '.' . $this->settings['fields']['token'] => $token,
+			),
+		);
+ 		if (!($user = $userModel->find('first', $options))) {
+			return $user;
+		}
+
+		return $user;
 	}
 
 	/**

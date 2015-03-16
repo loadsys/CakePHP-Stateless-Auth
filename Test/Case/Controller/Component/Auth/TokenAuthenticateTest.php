@@ -55,7 +55,7 @@ class TokenAuthenticateTest extends CakeTestCase {
 			array(
 				$this->Collection,
 				array(
-					'fields' => array('username' => 'username', 'password' => 'password'),
+					'fields' => array('username' => 'username', 'password' => 'password', 'token' => 'token'),
 					'userModel' => 'StatelessAuthUser',
 				),
 			)
@@ -78,7 +78,7 @@ class TokenAuthenticateTest extends CakeTestCase {
 	public function testConstructor() {
 		$settings = array(
 			'userModel' => 'AuthUser',
-			'fields' => array('username' => 'user', 'password' => 'password')
+			'fields' => array('username' => 'username', 'password' => 'password', 'token' => 'token'),
 		);
 		$Controller = new Controller();
 		$this->Collection = new ComponentCollection($Controller);
@@ -197,19 +197,11 @@ class TokenAuthenticateTest extends CakeTestCase {
 		$request = new CakeRequest();
 
 		// Set up a fake User model to return a dummy record.
-		$userModel = $this->getMockForModel('StatelessAuthUser', array('findForToken', 'updateLastLogin'));
-		$userModel->expects($this->once())
-			->method('findForToken')
-			->with($token)
-			->will($this->returnValue($user));
-		$userModel->expects($this->once())
-			->method('updateLastLogin')
-			->with($user['User']['id'])
-			->will($this->returnValue(true));
+		$userModel = $this->getMockForModel('StatelessAuthUser');
 
 		// Replace our accessor methods to return the dummy User model instance and dummy token.
 		$this->auth = $this->getMock('TokenAuthenticate',
-			array('getModel', 'getToken'),
+			array('getModel', 'getToken', 'getUserForToken'),
 			array(new ComponentCollection(), array())
 		);
 		$this->auth->expects($this->once())
@@ -219,6 +211,10 @@ class TokenAuthenticateTest extends CakeTestCase {
 			->method('getToken')
 			->with($request)
 			->will($this->returnValue($token));
+		$this->auth->expects($this->once())
+			->method('getUserForToken')
+			->with($userModel, $token)
+			->will($this->returnValue($user));
 
 		// Execute the SUT and check the direct returned result.
 		$result = $this->auth->getUser($request);
@@ -239,20 +235,23 @@ class TokenAuthenticateTest extends CakeTestCase {
 		$request = new CakeRequest();
 
 		// Set up a fake User model to return a dummy record.
-		$userModel = $this->getMockForModel('StatelessAuthUser', array('findForToken', 'updateLastLogin'));
-		$userModel->expects($this->once())
-			->method('findForToken')
-			->with($token)
-			->will($this->returnValue(false));
+		$userModel = $this->getMockForModel('StatelessAuthUser');
 
 		// Replace our accessor methods to return the dummy User model instance and dummy token.
 		$this->auth = $this->getMock('TokenAuthenticate',
-			array('getModel', 'getToken'),
+			array('getModel', 'getToken', 'getUserForToken'),
 			array(new ComponentCollection(), array())
 		);
+
 		$this->auth->expects($this->once())
 			->method('getModel')
 			->will($this->returnValue($userModel));
+
+		$this->auth->expects($this->once())
+			->method('getUserForToken')
+			->with($userModel, $token)
+			->will($this->returnValue(false));
+
 		$this->auth->expects($this->once())
 			->method('getToken')
 			->with($request)

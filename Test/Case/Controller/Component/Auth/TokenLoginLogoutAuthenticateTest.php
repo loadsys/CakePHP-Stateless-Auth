@@ -55,7 +55,7 @@ class TokenLoginLogoutAuthenticateTest extends CakeTestCase {
 			array(
 				$this->Collection,
 				array(
-					'fields' => array('username' => 'username', 'password' => 'password'),
+					'fields' => array('username' => 'username', 'password' => 'password', 'token' => 'token'),
 					'userModel' => 'StatelessAuthUserWithMethods',
 				),
 			)
@@ -78,7 +78,7 @@ class TokenLoginLogoutAuthenticateTest extends CakeTestCase {
 	public function testConstructor() {
 		$settings = array(
 			'userModel' => 'AuthUser',
-			'fields' => array('username' => 'user', 'password' => 'password')
+			'fields' => array('username' => 'username', 'password' => 'password', 'token' => 'token'),
 		);
 		$Controller = new Controller();
 		$this->Collection = new ComponentCollection($Controller);
