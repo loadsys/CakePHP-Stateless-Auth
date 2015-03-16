@@ -3,6 +3,7 @@
  * TestClasses used for mocking and injection of dummy classes for Testing the StatelessAuth Plugin
  */
 App::uses('StatelessAuthComponent', 'StatelessAuth.Controller/Component');
+App::uses('AppModel', 'Model');
 
 /**
  * Exposes protected properties via setters.
@@ -148,4 +149,11 @@ class StatelessAuthUser extends CakeTestModel {
  * ::constructAuthorize().
  */
 class HasNoAuthenticateMethodAuthenticate {
+}
+
+/**
+ * Dummy model to test that objects are returned from getModel() correctly.
+ */
+class TestCanary extends AppModel {
+	public $property = 'fizzbuzz';
 }

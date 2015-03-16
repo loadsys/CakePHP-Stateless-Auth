@@ -10,12 +10,12 @@
  *
  * @package StatelessAuth.Controller.Component.Auth
  */
-App::uses('FormAuthenticate', 'Controller/Component/Auth');
+App::uses('TokenAuthenticate', 'StatelessAuth.Controller/Component/Auth');
 
 /**
  * TokenAuthenticate
  */
-class TokenAuthenticate extends FormAuthenticate {
+class TokenLoginLogoutAuthenticate extends TokenAuthenticate {
 
 	/**
 	 * Authenticate a user based on the request information.
@@ -72,7 +72,7 @@ class TokenAuthenticate extends FormAuthenticate {
 	 * @return void The return value from this method isn't checked by AuthComponent::logout().
 	 */
 	public function logout($user) {
-		return true;
+		return $this->getModel()->logout($user);
 	}
 
 	/**

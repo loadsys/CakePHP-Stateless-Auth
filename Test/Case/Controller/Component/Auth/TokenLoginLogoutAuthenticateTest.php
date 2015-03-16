@@ -14,21 +14,21 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-App::uses('TokenAuthenticate', 'StatelessAuth.Controller/Component/Auth');
+App::uses('TokenLoginLogoutAuthenticate', 'StatelessAuth.Controller/Component/Auth');
 App::uses('ComponentCollection', 'Controller');
 App::uses('Controller', 'Controller');
 App::uses('CakeRequest', 'Network');
 App::uses('CakeResponse', 'Network');
 
 // test classes for mocking
-require_once dirname(dirname(dirname(dirname(dirname(__FILE__))))) . DS . "test_classes.php";
+//require_once dirname(dirname(dirname(dirname(dirname(__FILE__))))) . DS . "test_classes.php";
 
 /**
  * Test case for FormAuthentication
  *
  * @package       Cake.Test.Case.Controller.Component.Auth
  */
-class TokenAuthenticateTest extends CakeTestCase {
+class TokenLoginLogoutAuthenticateTest extends CakeTestCase {
 
 	/**
 	 * Fixtures
@@ -50,7 +50,7 @@ class TokenAuthenticateTest extends CakeTestCase {
 		parent::setUp();
 
 		$this->Collection = $this->getMock('ComponentCollection');
-		$this->auth = $this->getMock('TokenAuthenticate',
+		$this->auth = $this->getMock('TokenLoginLogoutAuthenticate',
 			array('generateToken'),
 			array(
 				$this->Collection,
@@ -82,7 +82,7 @@ class TokenAuthenticateTest extends CakeTestCase {
 		);
 		$Controller = new Controller();
 		$this->Collection = new ComponentCollection($Controller);
-		$object = new TokenAuthenticate($this->Collection, $settings);
+		$object = new TokenLoginLogoutAuthenticate($this->Collection, $settings);
 
 		$this->assertEquals($settings['userModel'], $object->settings['userModel']);
 		$this->assertEquals($settings['fields'], $object->settings['fields']);
@@ -115,7 +115,7 @@ class TokenAuthenticateTest extends CakeTestCase {
 			->will($this->returnValue($expected));
 
 		// Replace our accessor method to return the dummy User model instance.
-		$this->auth = $this->getMock('TokenAuthenticate',
+		$this->auth = $this->getMock('TokenLoginLogoutAuthenticate',
 			array('getModel'),
 			array(new ComponentCollection(), array())
 		);
@@ -172,13 +172,28 @@ class TokenAuthenticateTest extends CakeTestCase {
 			'id' => 'abcdef',
 			'token' => null,
 		);
+		// Set up a fake User model to return a dummy record.
+		$userModel = $this->getMockForModel('StatelessAuthUser', array('logout'));
+		$userModel->expects($this->once())
+			->method('logout')
+			->with($user) // This ensures that logout() tries to clear the stored token.
+			->will($this->returnValue('canary'));
+
+		// Replace our accessor method to return the dummy User model instance.
+		$this->auth = $this->getMock('TokenLoginLogoutAuthenticate',
+			array('getModel'),
+			array(new ComponentCollection(), array())
+		);
+		$this->auth->expects($this->once())
+			->method('getModel')
+			->will($this->returnValue($userModel));
 
 		// Execute the SUT and check the direct returned result.
 		$result = $this->auth->logout($user);
 		$this->assertEquals(
-			true,
+			'canary',
 			$result,
-			'Logout on simply returns true.'
+			'Logout on a Model that does have logout method, mocked to return canary.'
 		);
 	}
 
@@ -208,7 +223,7 @@ class TokenAuthenticateTest extends CakeTestCase {
 			->will($this->returnValue(true));
 
 		// Replace our accessor methods to return the dummy User model instance and dummy token.
-		$this->auth = $this->getMock('TokenAuthenticate',
+		$this->auth = $this->getMock('TokenLoginLogoutAuthenticate',
 			array('getModel', 'getToken'),
 			array(new ComponentCollection(), array())
 		);
@@ -246,7 +261,7 @@ class TokenAuthenticateTest extends CakeTestCase {
 			->will($this->returnValue(false));
 
 		// Replace our accessor methods to return the dummy User model instance and dummy token.
-		$this->auth = $this->getMock('TokenAuthenticate',
+		$this->auth = $this->getMock('TokenLoginLogoutAuthenticate',
 			array('getModel', 'getToken'),
 			array(new ComponentCollection(), array())
 		);
