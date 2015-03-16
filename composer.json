@@ -1,0 +1,31 @@
+{
+    "name": "loadsys/stateless-auth",
+    "description": "A replacement CakePHP Authentication/Authorization Component that is fully and strictly stateless. Designed to be used with Cake apps that are only accessed RESTfully.",
+    "keywords": ["cakephp","cakephp-plugin","stateless","authentication","authorization","component","restful"],
+    "license": "MIT",
+    "type": "cakephp-plugin",
+    "homepage": "https://github.com/loadsys/CakePHP-Stateless-Auth",
+    "authors": [
+        {
+            "name": "Brian Porter",
+            "email": "beporter@users.sourceforge.net"
+        },
+        {
+            "name": "Justin Yost",
+            "homepage": "https://www.yostivanich.com/",
+            "email": "justin.yost@yostivanich.com",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/loadsys/CakePHP-Stateless-Auth/issues",
+        "source": "https://github.com/loadsys/CakePHP-Stateless-Auth"
+    },
+    "require": {
+        "php": ">=5.4.0",
+        "composer/installers": "*"
+    },
+    "extra": {
+        "installer-name": "StatelessAuth"
+    }
+}
