@@ -125,6 +125,23 @@ class HasPrivilegePropertyController extends Controller {
 }
 
 /**
+ * A test controller that defines the mandatory ::$privilege property.
+ *
+ * Also uses the test model that defines necessary methods for
+ * TokenLoginLogoutAuthenticate.
+ *
+ */
+class HasPrivilegePropertyLoginLogoutController extends HasPrivilegePropertyController {
+
+	/**
+	 * uses property
+	 *
+	 * @var array
+	 */
+	public $uses = array('StatelessAuthUserWithMethods');
+}
+
+/**
  * StatelessAuthUser class
  *
  * @package       Cake.Test.Case.Controller.Component
@@ -137,8 +154,72 @@ class StatelessAuthUser extends CakeTestModel {
 	 * @var string
 	 */
 	public $useDbConfig = 'test';
+
+	/**
+	 * name property
+	 *
+	 * @var string
+	 */
 	public $name = 'User';
 
+}
+
+/**
+ * StatelessAuthUserWithMethods class
+ *
+ * @package       Cake.Test.Case.Controller.Component
+ */
+class StatelessAuthUserWithMethods extends CakeTestModel {
+
+	/**
+	 * useDbConfig property
+	 *
+	 * @var string
+	 */
+	public $useDbConfig = 'test';
+
+	/**
+	 * name property
+	 *
+	 * @var string
+	 */
+	public $name = 'User';
+
+	/**
+	 * login method
+	 *
+	 * @return void
+	 */
+	public function login($user) {
+		return 'login';
+	}
+
+	/**
+	 * logout method
+	 *
+	 * @return void
+	 */
+	public function logout($user) {
+		return 'logout';
+	}
+
+	/**
+	 * updateLastLogin method
+	 *
+	 * @return void
+	 */
+	public function updateLastLogin($userId) {
+		return 'updateLastLogin';
+	}
+
+	/**
+	 * findForToken method
+	 *
+	 * @return void
+	 */
+	public function findForToken($token) {
+		return 'findForToken';
+	}
 }
 
 /**

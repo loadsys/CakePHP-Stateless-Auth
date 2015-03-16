@@ -56,7 +56,7 @@ class TokenLoginLogoutAuthenticateTest extends CakeTestCase {
 				$this->Collection,
 				array(
 					'fields' => array('username' => 'username', 'password' => 'password'),
-					'userModel' => 'StatelessAuthUser',
+					'userModel' => 'StatelessAuthUserWithMethods',
 				),
 			)
 		);
@@ -65,7 +65,7 @@ class TokenLoginLogoutAuthenticateTest extends CakeTestCase {
 			->will($this->returnValue('abcde'));
 
 		$password = Security::hash('password', null, true);
-		$User = ClassRegistry::init('StatelessAuthUser');
+		$User = ClassRegistry::init('StatelessAuthUserWithMethods');
 		$User->updateAll(array('password' => $User->getDataSource()->value($password)));
 		$this->response = $this->getMock('CakeResponse');
 	}
@@ -108,7 +108,7 @@ class TokenLoginLogoutAuthenticateTest extends CakeTestCase {
 				'token' => 'abcde',
 			),
 		);
-		$userModel = $this->getMockForModel('StatelessAuthUser', array('login'));
+		$userModel = $this->getMockForModel('StatelessAuthUserWithMethods', array('login'));
 		$userModel->expects($this->once())
 			->method('login')
 			->with('test', 'test')
@@ -172,26 +172,9 @@ class TokenLoginLogoutAuthenticateTest extends CakeTestCase {
 			'id' => 'abcdef',
 			'token' => null,
 		);
-		// Set up a fake User model to return a dummy record.
-		$userModel = $this->getMockForModel('StatelessAuthUser', array('logout'));
-		$userModel->expects($this->once())
-			->method('logout')
-			->with($user) // This ensures that logout() tries to clear the stored token.
-			->will($this->returnValue('canary'));
-
-		// Replace our accessor method to return the dummy User model instance.
-		$this->auth = $this->getMock('TokenLoginLogoutAuthenticate',
-			array('getModel'),
-			array(new ComponentCollection(), array())
-		);
-		$this->auth->expects($this->once())
-			->method('getModel')
-			->will($this->returnValue($userModel));
-
-		// Execute the SUT and check the direct returned result.
 		$result = $this->auth->logout($user);
 		$this->assertEquals(
-			'canary',
+			'logout',
 			$result,
 			'Logout on a Model that does have logout method, mocked to return canary.'
 		);
@@ -212,7 +195,7 @@ class TokenLoginLogoutAuthenticateTest extends CakeTestCase {
 		$request = new CakeRequest();
 
 		// Set up a fake User model to return a dummy record.
-		$userModel = $this->getMockForModel('StatelessAuthUser', array('findForToken', 'updateLastLogin'));
+		$userModel = $this->getMockForModel('StatelessAuthUserWithMethods', array('findForToken', 'updateLastLogin'));
 		$userModel->expects($this->once())
 			->method('findForToken')
 			->with($token)
@@ -254,7 +237,7 @@ class TokenLoginLogoutAuthenticateTest extends CakeTestCase {
 		$request = new CakeRequest();
 
 		// Set up a fake User model to return a dummy record.
-		$userModel = $this->getMockForModel('StatelessAuthUser', array('findForToken', 'updateLastLogin'));
+		$userModel = $this->getMockForModel('StatelessAuthUserWithMethods', array('findForToken', 'updateLastLogin'));
 		$userModel->expects($this->once())
 			->method('findForToken')
 			->with($token)
