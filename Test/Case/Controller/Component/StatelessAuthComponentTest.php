@@ -165,10 +165,10 @@ class StatelessAuthComponentTest extends CakeTestCase {
 	 * @var array
 	 */
 	public $fixtures = array(
-		'plugin.StatelessAuth.user',
-		'plugin.StatelessAuth.permission',
-		'plugin.StatelessAuth.privilege',
-		'plugin.StatelessAuth.i18n',
+		'plugin.stateless_auth.user',
+		'plugin.stateless_auth.permission',
+		'plugin.stateless_auth.privilege',
+		'plugin.stateless_auth.i18n',
 	);
 
 
