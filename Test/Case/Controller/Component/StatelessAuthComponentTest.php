@@ -6,151 +6,8 @@
 App::uses('Controller', 'Controller');
 App::uses('StatelessAuthComponent', 'StatelessAuth.Controller/Component');
 
-/**
- * A test controller that does not define the mandatory ::$privilege property.
- *
- */
-class MissingHasPrivilegePropertyController extends Controller {
-}
-
-/**
- * A test controller that defines the mandatory ::$privilege property.
- *
- */
-class HasPrivilegePropertyController extends Controller {
-
-	/**
-	 * privilege property
-	 *
-	 * @var array
-	 */
-	public $privilege = 'users';
-
-	/**
-	 * components property
-	 *
-	 * @var array
-	 */
-	public $components = array('Auth');
-
-	/**
-	 * uses property
-	 *
-	 * @var array
-	 */
-	public $uses = array('AuthUser');
-
-	/**
-	 * testUrl property
-	 *
-	 * @var mixed
-	 */
-	public $testUrl = null;
-
-	/**
-	 * construct method
-	 *
-	 */
-	public function __construct($request, $response) {
-		$request->addParams(Router::parse('/auth_test'));
-		$request->here = '/auth_test';
-		$request->webroot = '/';
-		Router::setRequestInfo($request);
-		parent::__construct($request, $response);
-	}
-
-	/**
-	 * login method
-	 *
-	 * @return void
-	 */
-	public function login() {
-	}
-
-	/**
-	 * admin_login method
-	 *
-	 * @return void
-	 */
-	public function admin_login() {
-	}
-
-	/**
-	 * admin_add method
-	 *
-	 * @return void
-	 */
-	public function admin_add() {
-	}
-
-	/**
-	 * logout method
-	 *
-	 * @return void
-	 */
-	public function logout() {
-	}
-
-	/**
-	 * add method
-	 *
-	 * @return void
-	 */
-	public function add() {
-		echo "add";
-	}
-
-	/**
-	 * add method
-	 *
-	 * @return void
-	 */
-	public function camelCase() {
-		echo "camelCase";
-	}
-}
-
-/**
- * AuthUser class
- *
- * @package       Cake.Test.Case.Controller.Component
- */
-class AuthUser extends CakeTestModel {
-
-	/**
-	 * useDbConfig property
-	 *
-	 * @var string
-	 */
-	public $useDbConfig = 'test';
-
-}
-
-/**
- * An Authentication object that does not define the required
- * ::authenticate() method.
- *
- * Used for testing StatelessAuthComponent::constructAuthenticate() and
- * ::constructAuthorize().
- */
-class HasNoAuthenticateMethodAuthenticate {
-}
-
-
-/**
- * Exposes protected properties via setters.
- *
- */
-class TestStatelessAuthComponent extends StatelessAuthComponent {
-	public $authenticateObject;
-	public $authorizeObject;
-	public function setUser($user) {
-		$this->user = $user;
-	}
-	public function whichUser($user = null) {
-		return parent::whichUser($user);
-	}
-}
+// test classes for mocking
+require_once dirname(dirname(dirname(dirname(__FILE__)))) . DS . "test_classes.php";
 
 /**
  * StatelessAuthComponentTest class
@@ -663,7 +520,7 @@ class StatelessAuthComponentTest extends CakeTestCase {
 		$this->Controller->request->query['url'] = Router::normalize($url);
 		$this->initComponentAuthObjects();
 		$this->Component->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
-		$this->Component->userModel = 'AuthUser';
+		$this->Component->userModel = 'StatelessAuthUser';
 		$this->Component->allow();
 		$result = $this->Component->startup($this->Controller);
 		$this->assertTrue($result, 'startup() should return true, as action is allowed. %s');
@@ -673,7 +530,7 @@ class StatelessAuthComponentTest extends CakeTestCase {
 		$this->Controller->request->query['url'] = Router::normalize($url);
 		$this->initComponentAuthObjects();
 		$this->Component->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
-		$this->Component->userModel = 'AuthUser';
+		$this->Component->userModel = 'StatelessAuthUser';
 		$this->Component->allowedActions = array('delete', 'camelCase', 'add');
 		$result = $this->Component->startup($this->Controller);
 		$this->assertTrue($result, 'startup() should return true, as action is allowed. %s');
@@ -687,7 +544,7 @@ class StatelessAuthComponentTest extends CakeTestCase {
 		$this->Controller->request->query['url'] = Router::normalize($url);
 		$this->initComponentAuthObjects();
 		$this->Component->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
-		$this->Component->userModel = 'AuthUser';
+		$this->Component->userModel = 'StatelessAuthUser';
 
 		$this->Component->allow(array('delete', 'add'));
 		$result = $this->Component->startup($this->Controller);

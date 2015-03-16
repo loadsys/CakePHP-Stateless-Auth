@@ -21,6 +21,8 @@ App::uses('AppModel', 'Model');
 App::uses('CakeRequest', 'Network');
 App::uses('CakeResponse', 'Network');
 
+// test classes for mocking
+require_once dirname(dirname(dirname(dirname(dirname(__FILE__))))) . DS . "test_classes.php";
 
 /**
  * Dummy model to test that objects are returned from getModel() correctly.
@@ -62,7 +64,7 @@ class TokenAuthenticateTest extends CakeTestCase {
 				$this->Collection,
 				array(
 					'fields' => array('username' => 'username', 'password' => 'password'),
-					'userModel' => 'User',
+					'userModel' => 'StatelessAuthUser',
 				),
 			)
 		);
@@ -71,7 +73,7 @@ class TokenAuthenticateTest extends CakeTestCase {
 			->will($this->returnValue('abcde'));
 
 		$password = Security::hash('password', null, true);
-		$User = ClassRegistry::init('User');
+		$User = ClassRegistry::init('StatelessAuthUser');
 		$User->updateAll(array('password' => $User->getDataSource()->value($password)));
 		$this->response = $this->getMock('CakeResponse');
 	}
@@ -114,7 +116,7 @@ class TokenAuthenticateTest extends CakeTestCase {
 				'token' => 'abcde',
 			),
 		);
-		$userModel = $this->getMockForModel('User', array('login'));
+		$userModel = $this->getMockForModel('StatelessAuthUser', array('login'));
 		$userModel->expects($this->once())
 			->method('login')
 			->with('test', 'test')
@@ -179,7 +181,7 @@ class TokenAuthenticateTest extends CakeTestCase {
 			'token' => null,
 		);
 		// Set up a fake User model to return a dummy record.
-		$userModel = $this->getMockForModel('User', array('save'));
+		$userModel = $this->getMockForModel('StatelessAuthUser', array('save'));
 		$userModel->expects($this->once())
 			->method('save')
 			->with($user) // This ensures that logout() tries to clear the stored token.
@@ -218,7 +220,7 @@ class TokenAuthenticateTest extends CakeTestCase {
 		$request = new CakeRequest();
 
 		// Set up a fake User model to return a dummy record.
-		$userModel = $this->getMockForModel('User', array('findForToken', 'updateLastLogin'));
+		$userModel = $this->getMockForModel('StatelessAuthUser', array('findForToken', 'updateLastLogin'));
 		$userModel->expects($this->once())
 			->method('findForToken')
 			->with($token)
@@ -260,7 +262,7 @@ class TokenAuthenticateTest extends CakeTestCase {
 		$request = new CakeRequest();
 
 		// Set up a fake User model to return a dummy record.
-		$userModel = $this->getMockForModel('User', array('findForToken', 'updateLastLogin'));
+		$userModel = $this->getMockForModel('StatelessAuthUser', array('findForToken', 'updateLastLogin'));
 		$userModel->expects($this->once())
 			->method('findForToken')
 			->with($token)
