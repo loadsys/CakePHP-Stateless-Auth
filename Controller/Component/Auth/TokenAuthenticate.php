@@ -72,7 +72,12 @@ class TokenAuthenticate extends FormAuthenticate {
 	 * @return void The return value from this method isn't checked by AuthComponent::logout().
 	 */
 	public function logout($user) {
-		return $this->getModel()->logout($user);
+		$userModel = $this->getModel();
+		if ($this->isActualClassMethod('logout', $userModel)) {
+			return $userModel->logout($user);
+		} else {
+			return true;
+		}
 	}
 
 	/**
@@ -117,4 +122,21 @@ class TokenAuthenticate extends FormAuthenticate {
 		$token = str_ireplace('Bearer ', '', $request->header('Authorization'));
 		return $token;
 	}
+
+	/**
+	 * Confirm that a method is actually defined (and not shadowed by
+	 * `__call()` for the given object.)
+	 *
+	 * @access	protected
+	 * @param	string	$method	The name of the method to check.
+	 * @param	object	$obj	The instantiated object to check.
+	 * @return	boolean			True if the named method exists (not via __call()), false otherwise.
+	 */
+	protected function isActualClassMethod($method, $obj) {
+		return (
+			in_array($method, get_class_methods($obj))
+			&& is_callable(array($obj, $method))
+		);
+	}
+
 }
