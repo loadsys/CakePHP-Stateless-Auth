@@ -80,7 +80,7 @@ class StatelessAuthComponent extends Component {
 	 *
 	 * {{{
 	 *	$this->Auth->authorize = array(
-	 *		'className' => 'Privilege'
+	 *		'className' => 'Privilege'  //@TODO: Replace with a more general `StatelessAuth.isAuthorizedAuthorize` object
 	 *		'userModel' => 'Users.User'
 	 *	);
 	 * }}}
@@ -92,7 +92,7 @@ class StatelessAuthComponent extends Component {
 	 * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html
 	 */
 	public $authorize = array(
-		'className' => 'Privilege',
+		'className' => 'StatelessAuth.Privilege',  //@TODO: Replace with a more general `isAuthorizedAuthorize` object
 		'userModel' => 'User',
 	);
 
@@ -217,10 +217,6 @@ class StatelessAuthComponent extends Component {
 			return false;
 		}
 
-		if (empty($this->user['Permission'])) {
-			return false;
-		}
-
 		if (
 			$this->_isLoginAction($controller) ||
 			$this->isAuthorized($this->user())
@@ -232,14 +228,12 @@ class StatelessAuthComponent extends Component {
 	}
 
 	/**
-	 * Get the current user.
+	 * Get the current user stored in the Component.
 	 *
-	 * Will prefer the static user cache over sessions. The static user
-	 * cache is primarily used for stateless authentication. For stateful authentication,
-	 * cookies + sessions will be used.
+	 * Returns a specific property from the user record if $key is provided.
 	 *
-	 * @param string $key field to retrieve. Leave null to get entire User record
-	 * @return array|null User record. or null if no user is logged in.
+	 * @param string $key Field to retrieve. Leave null to get entire User record.
+	 * @return mixed User record, User field value, or null if no User is logged in.
 	 * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#accessing-the-logged-in-user
 	 */
 	public function user($key = null) {
@@ -287,7 +281,7 @@ class StatelessAuthComponent extends Component {
 	 */
 	public function identify(CakeRequest $request, CakeResponse $response) {
 		$result = $this->authenticateObject->authenticate($request, $response);
-		if (!empty($result) && is_array($result) && array_key_exists('token', $result)) {
+		if (!empty($result) && is_array($result)) {
 			return $result;
 		}
 		return false;

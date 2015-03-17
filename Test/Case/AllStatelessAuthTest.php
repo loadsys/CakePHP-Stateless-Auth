@@ -4,21 +4,14 @@
  */
 class AllStatelessAuthTest extends PHPUnit_Framework_TestSuite {
 	public static $suites = array(
-		// Then data manipulation.
+		'AllStatelessAuthLibsTest.php',
 		'AllStatelessAuthBehaviorsTest.php',
-		'AllStatelessAuthModelsTest.php',
-
-		// Then business logic.
 		'AllStatelessAuthComponentsTest.php',
-		'AllStatelessAuthControllersTest.php',
-
-		// Then view helpers.
-		'AllStatelessAuthHelpersTest.php',
 	);
 
 	public static function suite() {
 		$path = dirname(__FILE__) . '/';
-		$suite = new CakeTestSuite('All Tests');
+		$suite = new CakeTestSuite('All StatelessAuth Tests');
 
 		foreach (self::$suites as $file) {
 			if (is_readable($path . $file)) {

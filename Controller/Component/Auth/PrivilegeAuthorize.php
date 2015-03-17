@@ -102,7 +102,7 @@ class PrivilegeAuthorize extends BaseAuthorize {
 	public function authorize($user, CakeRequest $request) {
 		if (method_exists($this->_Controller, 'isAuthorized')) {
 			if (!call_user_func(array($this->_Controller, 'isAuthorized'), $user)) {
-				throw new ForbiddenByPermissionsException(null, 'Custom isAuthorized() method denied access.');
+				throw new StatelessAuthForbiddenByPermissionsException(null, 'Custom isAuthorized() method denied access.');
 			} else {
 				return true;
 			}
@@ -116,17 +116,15 @@ class PrivilegeAuthorize extends BaseAuthorize {
 		}
 
 		// If we somehow end up with an extra layer, knock it out of the way.
-		if (isset($user['User']['Permission'])) {
+		if (isset($user['User'])) {
 			$user = $user['User'];
 		}
-		if (empty($user['Permission'])) {
-			throw new ForbiddenByPermissionsException(null, 'No User Permission object available.');
-		}
-		$permissions = $user['Permission'];
+
+		$permissions = $user['Permission']; //@TODO: Refactor all this Privilege stuff into a FM subclass.
 
 		if (!$this->userHasAccess($permissions, $privilege, $action)) {
 			if (Configure::read('debug') > 0) {
-				throw new ForbiddenByPermissionsException();
+				throw new StatelessAuthForbiddenByPermissionsException();
 			} else {
 				throw new NotFoundException(); // **DO NOT** include a message that would differentiate this case from other 404's!
 			}

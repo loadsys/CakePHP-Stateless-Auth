@@ -3,6 +3,10 @@
  * TestClasses used for mocking and injection of dummy classes for Testing the StatelessAuth Plugin
  */
 App::uses('StatelessAuthComponent', 'StatelessAuth.Controller/Component');
+App::uses('TokenLoginLogoutAuthenticate', 'StatelessAuth.Controller/Component/Auth');
+App::uses('AppModel', 'Model');
+App::uses('Controller', 'Controller');
+App::import('Lib/Error', 'StatelessAuth.StatelessAuthExceptions');
 
 /**
  * Exposes protected properties via setters.
@@ -124,6 +128,23 @@ class HasPrivilegePropertyController extends Controller {
 }
 
 /**
+ * A test controller that defines the mandatory ::$privilege property.
+ *
+ * Also uses the test model that defines necessary methods for
+ * TokenLoginLogoutAuthenticate.
+ *
+ */
+class HasPrivilegePropertyLoginLogoutController extends HasPrivilegePropertyController {
+
+	/**
+	 * uses property
+	 *
+	 * @var array
+	 */
+	public $uses = array('StatelessAuthUserWithMethods');
+}
+
+/**
  * StatelessAuthUser class
  *
  * @package       Cake.Test.Case.Controller.Component
@@ -136,8 +157,72 @@ class StatelessAuthUser extends CakeTestModel {
 	 * @var string
 	 */
 	public $useDbConfig = 'test';
+
+	/**
+	 * name property
+	 *
+	 * @var string
+	 */
 	public $name = 'User';
 
+}
+
+/**
+ * StatelessAuthUserWithMethods class
+ *
+ * @package       Cake.Test.Case.Controller.Component
+ */
+class StatelessAuthUserWithMethods extends CakeTestModel {
+
+	/**
+	 * useDbConfig property
+	 *
+	 * @var string
+	 */
+	public $useDbConfig = 'test';
+
+	/**
+	 * name property
+	 *
+	 * @var string
+	 */
+	public $name = 'User';
+
+	/**
+	 * login method
+	 *
+	 * @return void
+	 */
+	public function login($user, $pass) {
+		return 'login';
+	}
+
+	/**
+	 * logout method
+	 *
+	 * @return void
+	 */
+	public function logout($user) {
+		return 'logout';
+	}
+
+	/**
+	 * updateLastLogin method
+	 *
+	 * @return void
+	 */
+	public function updateLastLogin($userId) {
+		return 'updateLastLogin';
+	}
+
+	/**
+	 * findForToken method
+	 *
+	 * @return void
+	 */
+	public function findForToken($token) {
+		return 'findForToken';
+	}
 }
 
 /**
@@ -148,4 +233,19 @@ class StatelessAuthUser extends CakeTestModel {
  * ::constructAuthorize().
  */
 class HasNoAuthenticateMethodAuthenticate {
+}
+
+/**
+ * Dummy model to test that objects are returned from getModel() correctly.
+ */
+class TestCanary extends AppModel {
+	public $property = 'fizzbuzz';
+}
+
+/**
+ * Expose protected properties in TokenLoginLogoutAuthenticate for testing.
+ */
+class TestTokenLoginLogoutAuthenticate extends TokenLoginLogoutAuthenticate {
+	public $_Collection = null;
+	public $UserModel = null;
 }
