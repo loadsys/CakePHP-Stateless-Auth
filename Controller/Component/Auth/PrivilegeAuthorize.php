@@ -116,13 +116,11 @@ class PrivilegeAuthorize extends BaseAuthorize {
 		}
 
 		// If we somehow end up with an extra layer, knock it out of the way.
-		if (isset($user['User']['Permission'])) {
+		if (isset($user['User'])) {
 			$user = $user['User'];
 		}
-		if (empty($user['Permission'])) {
-			throw new StatelessAuthForbiddenByPermissionsException(null, 'No User Permission object available.');
-		}
-		$permissions = $user['Permission'];
+
+		$permissions = $user['Permission']; //@TODO: Refactor all this Privilege stuff into a FM subclass.
 
 		if (!$this->userHasAccess($permissions, $privilege, $action)) {
 			if (Configure::read('debug') > 0) {

@@ -50,19 +50,20 @@ class TokenLoginLogoutAuthenticateTest extends CakeTestCase {
 		parent::setUp();
 
 		$this->Collection = $this->getMock('ComponentCollection');
-		$this->auth = $this->getMock('TokenLoginLogoutAuthenticate',
-			array('generateToken'),
+		$this->auth = $this->getMock('TestTokenLoginLogoutAuthenticate',
+			null,
 			array(
 				$this->Collection,
 				array(
-					'fields' => array('username' => 'username', 'password' => 'password', 'token' => 'token'),
 					'userModel' => 'StatelessAuthUserWithMethods',
+					'fields' => array(
+						'username' => 'username',
+						'password' => 'password',
+						'token' => 'token',
+					),
 				),
 			)
 		);
-		$this->auth->expects($this->any())
-			->method('generateToken')
-			->will($this->returnValue('abcde'));
 
 		$password = Security::hash('password', null, true);
 		$User = ClassRegistry::init('StatelessAuthUserWithMethods');
@@ -75,10 +76,14 @@ class TokenLoginLogoutAuthenticateTest extends CakeTestCase {
 	 *
 	 * @return void
 	 */
-	public function testConstructor() {
+	public function testConstructorSuccess() {
 		$settings = array(
-			'userModel' => 'AuthUser',
-			'fields' => array('username' => 'username', 'password' => 'password', 'token' => 'token'),
+			'userModel' => 'StatelessAuthUserWithMethods',
+			'fields' => array(
+				'username' => 'email',
+				'password' => 'pass',
+				'token' => 'oauth',
+			),
 		);
 		$Controller = new Controller();
 		$this->Collection = new ComponentCollection($Controller);
@@ -86,6 +91,31 @@ class TokenLoginLogoutAuthenticateTest extends CakeTestCase {
 
 		$this->assertEquals($settings['userModel'], $object->settings['userModel']);
 		$this->assertEquals($settings['fields'], $object->settings['fields']);
+	}
+
+	/**
+	 * Test applying settings in the constructor.
+	 *
+	 * @return void
+	 */
+	public function testConstructorFailsWhenUserMethodsMissing() {
+		$settings = array(
+			'userModel' => 'StatelessAuthUser',
+			'fields' => array(
+				'username' => 'email',
+				'password' => 'pass',
+				'token' => 'oauth',
+			),
+		);
+		$Controller = new Controller();
+		$this->Collection = new ComponentCollection($Controller);
+
+		$this->expectException(
+			'StatelessAuthMissingMethodException',
+			'TokenLoginLogoutAuthenticate requires the StatelessAuthUser model to define a `public function login($username, $password) => array|false` method.'
+		);
+
+		$object = new TokenLoginLogoutAuthenticate($this->Collection, $settings);
 	}
 
 	/**
@@ -99,49 +129,26 @@ class TokenLoginLogoutAuthenticateTest extends CakeTestCase {
 			'username' => 'test',
 			'password' => 'test',
 		);
-		$now = date_create()->getTimestamp();
-
-		// Set up a fake User model to return a dummy record.
-		$expected = array(
-			'User' => array(
-				'id' => '7d5b22bd-fc92-11e3-b153-080027dec79b',
-				'token' => 'abcde',
-			),
-		);
-		$userModel = $this->getMockForModel('StatelessAuthUserWithMethods', array('login'));
-		$userModel->expects($this->once())
-			->method('login')
-			->with('test', 'test')
-			->will($this->returnValue($expected));
-
-		// Replace our accessor method to return the dummy User model instance.
-		$this->auth = $this->getMock('TokenLoginLogoutAuthenticate',
-			array('getModel'),
-			array(new ComponentCollection(), array())
-		);
-		$this->auth->expects($this->once())
-			->method('getModel')
-			->will($this->returnValue($userModel));
 
 		// Execute the SUT and check the direct returned result.
 		$result = $this->auth->authenticate($request, $this->response);
 		$this->assertEquals(
-			$expected,
+			'login',
 			$result,
 			'authenticate() must pass back the User records provided by the User model.'
 		);
 	}
 
 	/**
-	 * Test _checkFields() failure in authenticate().
+	 * Test checkFields() failure in authenticate().
 	 *
 	 * @return void
 	 */
 	public function testAuthenticateCheckFieldsFails() {
 		$request = new CakeRequest('posts/index', false);
-		$request->data = array('User' => array(
+		$request->data = array('StatelessAuthUserWithMethods' => array(
 			'username' => 'test',
-			// missing [password] field should cause _checkFields() to fail.
+			'password' => null,  // Should count as "empty" and fail checkFields().
 		));
 
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
@@ -158,6 +165,11 @@ class TokenLoginLogoutAuthenticateTest extends CakeTestCase {
 			'username' => 'does-not-exist',
 			'password' => 'test',
 		));
+		$this->auth->UserModel = $this->getMock('StatelessAuthUserWithMethods', array('login'));
+		$this->auth->UserModel->expects($this->once())
+			->method('login')
+			->with($request->data['User']['username'], $request->data['User']['password'])
+			->will($this->returnValue(false));
 
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
 	}
@@ -195,24 +207,17 @@ class TokenLoginLogoutAuthenticateTest extends CakeTestCase {
 		$request = new CakeRequest();
 
 		// Set up a fake User model to return a dummy record.
-		$userModel = $this->getMockForModel('StatelessAuthUserWithMethods', array('findForToken', 'updateLastLogin'));
-		$userModel->expects($this->once())
+		$this->auth->UserModel = $this->getMockForModel('StatelessAuthUserWithMethods', array('findForToken'));
+		$this->auth->UserModel->expects($this->once())
 			->method('findForToken')
 			->with($token)
 			->will($this->returnValue($user));
-		$userModel->expects($this->once())
-			->method('updateLastLogin')
-			->with($user['User']['id'])
-			->will($this->returnValue(true));
 
 		// Replace our accessor methods to return the dummy User model instance and dummy token.
 		$this->auth = $this->getMock('TokenLoginLogoutAuthenticate',
-			array('getModel', 'getToken'),
+			array('getToken'),
 			array(new ComponentCollection(), array())
 		);
-		$this->auth->expects($this->once())
-			->method('getModel')
-			->will($this->returnValue($userModel));
 		$this->auth->expects($this->once())
 			->method('getToken')
 			->with($request)
@@ -234,23 +239,25 @@ class TokenLoginLogoutAuthenticateTest extends CakeTestCase {
 	 */
 	public function testGetUserFails() {
 		$token = 'foobar';
+		$user = array(
+			'User' => array(
+				'id' => 'abcdef',
+			),
+		);
 		$request = new CakeRequest();
 
 		// Set up a fake User model to return a dummy record.
-		$userModel = $this->getMockForModel('StatelessAuthUserWithMethods', array('findForToken', 'updateLastLogin'));
-		$userModel->expects($this->once())
+		$this->auth->UserModel = $this->getMockForModel('StatelessAuthUserWithMethods', array('findForToken'));
+		$this->auth->UserModel->expects($this->once())
 			->method('findForToken')
 			->with($token)
 			->will($this->returnValue(false));
 
 		// Replace our accessor methods to return the dummy User model instance and dummy token.
 		$this->auth = $this->getMock('TokenLoginLogoutAuthenticate',
-			array('getModel', 'getToken'),
+			array('getToken'),
 			array(new ComponentCollection(), array())
 		);
-		$this->auth->expects($this->once())
-			->method('getModel')
-			->will($this->returnValue($userModel));
 		$this->auth->expects($this->once())
 			->method('getToken')
 			->with($request)
@@ -258,7 +265,7 @@ class TokenLoginLogoutAuthenticateTest extends CakeTestCase {
 
 		// Execute the SUT and check the direct returned result.
 		$this->expectException(
-			'UnauthorizedJsonApiException',
+			'StatelessAuthUnauthorizedException',
 			'Missing, invalid or expired token present in request. Include an HTTP_AUTHORIZATION header, or please login to obtain a token.'
 		);
 		$result = $this->auth->getUser($request);

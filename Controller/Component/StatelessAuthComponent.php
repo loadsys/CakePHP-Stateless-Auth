@@ -80,7 +80,7 @@ class StatelessAuthComponent extends Component {
 	 *
 	 * {{{
 	 *	$this->Auth->authorize = array(
-	 *		'className' => 'Privilege'
+	 *		'className' => 'Privilege'  //@TODO: Replace with a more general `StatelessAuth.isAuthorizedAuthorize` object
 	 *		'userModel' => 'Users.User'
 	 *	);
 	 * }}}
@@ -92,7 +92,7 @@ class StatelessAuthComponent extends Component {
 	 * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html
 	 */
 	public $authorize = array(
-		'className' => 'Privilege',
+		'className' => 'StatelessAuth.Privilege',  //@TODO: Replace with a more general `isAuthorizedAuthorize` object
 		'userModel' => 'User',
 	);
 
@@ -214,10 +214,6 @@ class StatelessAuthComponent extends Component {
 		}
 
 		if (!$this->_getUser()) {
-			return false;
-		}
-
-		if (empty($this->user['Permission'])) {
 			return false;
 		}
 

@@ -185,3 +185,28 @@ class StatelessAuthForbiddenByPermissionsException extends StatelessAuthExceptio
 	}
 }
 
+/**
+ * Used when the named User model does not define necessary methods.
+ */
+class StatelessAuthMissingMethodException extends StatelessAuthException {
+
+	/**
+	 * Constructs a new instance of the StatelessAuthMissingMethodException
+	 *
+	 * @param string $title The title of the exception.
+	 * @param string $detail A detailed human readable message.
+	 * @param int $code The http status code of the error.
+	 * @param string $href A URI that MAY yield further details about this particular occurrence of the problem.
+	 * @param string $id A unique identifier for this particular occurrence of the problem.
+	 */
+	public function __construct(
+		$title = 'Missing Method',
+		$detail = 'Missing Method',
+		$code = 500,
+		$href = null,
+		$id = null
+	) {
+		parent::__construct($title, $detail, $code, $href, $id);
+	}
+}
+

@@ -44,6 +44,29 @@ class TokenLoginLogoutAuthenticate extends TokenAuthenticate {
 	);
 
 	/**
+	 * Stores a copy of the User model defined by ::$settings[userModel].
+	 *
+	 * @var Model
+	 */
+	protected $UserModel = null;
+
+	/**
+	 * Constructor
+	 *
+	 * @param ComponentCollection $collection The Component collection used on this request.
+	 * @param array $settings Array of settings to use.
+	 */
+	public function __construct(ComponentCollection $collection, $settings) {
+		parent::__construct($collection, $settings);
+
+		$userModel = $this->settings['userModel'];
+		list(, $model) = pluginSplit($userModel);
+		$this->UserModel = $this->getModel();
+
+		$this->requireUserModelMethods();
+	}
+
+	/**
 	 * Authenticate a user based on the request information.
 	 *
 	 * Called only by Auth->login() to validate the User. The returned User
@@ -63,22 +86,23 @@ class TokenLoginLogoutAuthenticate extends TokenAuthenticate {
 	public function authenticate(CakeRequest $request, CakeResponse $response) {
 		$userModel = $this->settings['userModel'];
 		list(, $model) = pluginSplit($userModel);
+		$alias = $this->UserModel->alias;
 		$fields = $this->settings['fields'];
 
 		// Add a surrounding [User] array, if not present.
 		if (isset($request->data[$fields['username']])) {
-			$request->data = array($model => $request->data);
+			$request->data = array($alias => $request->data);
 		}
 
 		// Check the fields.
-		if (!$this->_checkFields($request, $model, $fields)) {
+		if (!$this->checkFields($request, $alias)) {
 			return false;
 		}
 
 		// Call the login method.
-		$user = $this->getModel()->login(
-			$request->data[$model][$fields['username']],
-			$request->data[$model][$fields['password']]
+		$user = $this->UserModel->login(
+			$request->data[$alias][$fields['username']],
+			$request->data[$alias][$fields['password']]
 		);
 		if (!$user) {
 			return false;
@@ -98,7 +122,7 @@ class TokenLoginLogoutAuthenticate extends TokenAuthenticate {
 	 * @return void The return value from this method isn't checked by AuthComponent::logout().
 	 */
 	public function logout($user) {
-		return $this->getModel()->logout($user);
+		return $this->UserModel->logout($user);
 	}
 
 	/**
@@ -111,36 +135,57 @@ class TokenLoginLogoutAuthenticate extends TokenAuthenticate {
 	 */
 	public function getUser(CakeRequest $request) {
 		$token = $this->getToken($request);
-		$UserModel = $this->getModel();
-		$user = $UserModel->findForToken($token);
+		$user = $this->UserModel->findForToken($token);
 
 		if (empty($user['User'])) {
-			throw new UnauthorizedJsonApiException('Missing, invalid or expired token present in request. Include an HTTP_AUTHORIZATION header, or please login to obtain a token.');
+			throw new StatelessAuthUnauthorizedException(
+				'Missing, invalid or expired token present in request. Include an HTTP_AUTHORIZATION header, or please login to obtain a token.'
+			);
 		}
 
-		$UserModel->updateLastLogin($user['User']['id']);
-		return (!empty($user['User']) ? $user['User'] : false);
+		return $user['User'];
 	}
 
 	/**
-	 * Accessor to the User model object specified in settings.
+	 * Confirm that the supplied User model name defines the class methods
+	 * required by this authenticator.
 	 *
-	 * @return Model|false
+	 * @return void
+	 * @throws StatelessAuthMissingMethodException If a required User model method is found to be missing.
 	 */
-	public function getModel() {
-		return parent::getModel();
+	protected function requireUserModelMethods() {
+		$requiredMethods = array(
+			'login' => 'public function login($username, $password) => array|false',
+			'logout' => 'public function logout($user) => bool',
+			'findForToken' => 'public function findForToken($token) => array|false',
+		);
+		foreach ($requiredMethods as $method => $signature) {
+			if (!$this->isActualClassMethod($method, $this->UserModel)) {
+				throw new StatelessAuthMissingMethodException(
+					"TokenLoginLogoutAuthenticate requires the {$this->settings['userModel']} model to define a `{$signature}` method." //@TODO: Add a note about using StatelessAuthBehavior once it exists.
+				);
+			}
+		}
 	}
 
 	/**
-	 * Try to get the HTTP_AUTHORIZATION header value from the request.
+	 * Checks the fields to ensure they are supplied.
 	 *
-	 * Permitted values may optionally be prefixed by `Bearer `.
-	 *
-	 * @param CakeRequest $request Request object.
-	 * @return string The (possibly empty) string representing the provided auth token.
+	 * @param CakeRequest $request The request that contains login information.
+	 * @param string $model The model used for login verification.
+	 * @return bool False if the fields have not been supplied. True if they exist.
 	 */
-	public function getToken(CakeRequest $request) {
-		return parent::getToken($request);
+	protected function checkFields(CakeRequest $request, $model) {
+		if (empty($request->data[$model])) {
+			return false;
+		}
+		foreach (array($this->settings['fields']['username'], $this->settings['fields']['password']) as $field) {
+			$value = $request->data($model . '.' . $field);
+			if (empty($value) && $value !== '0' || !is_string($value)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -158,5 +203,4 @@ class TokenLoginLogoutAuthenticate extends TokenAuthenticate {
 			&& is_callable(array($obj, $method))
 		);
 	}
-
 }

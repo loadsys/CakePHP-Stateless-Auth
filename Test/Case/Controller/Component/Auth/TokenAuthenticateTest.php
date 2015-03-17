@@ -122,6 +122,7 @@ class TokenAuthenticateTest extends CakeTestCase {
 	 */
 	public function testAuthenticateFails() {
 		$request = new CakeRequest('posts/index', false);
+		$this->auth->settings['userFields'] = array('username', 'token');
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
 	}
 

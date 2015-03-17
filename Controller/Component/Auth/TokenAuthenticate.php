@@ -124,7 +124,8 @@ class TokenAuthenticate extends BaseAuthenticate {
 	 * @return Model|false
 	 */
 	public function getModel() {
-		return ClassRegistry::init($this->settings['userModel']);
+		list(, $model) = pluginSplit($this->settings['userModel']);
+		return ClassRegistry::init($model);
 	}
 
 	/**
@@ -171,20 +172,5 @@ class TokenAuthenticate extends BaseAuthenticate {
 
  		$user = $this->getModel()->find('first', $options);
 		return $user;
-	}
-
-	/**
-	 * Confirm that a method is actually defined (and not shadowed by
-	 * `__call()` for the given object.)
-	 *
-	 * @param string $method The name of the method to check.
-	 * @param object $obj The instantiated object to check.
-	 * @return bool True if the named method exists (not via __call()), false otherwise.
-	 */
-	protected function isActualClassMethod($method, $obj) {
-		return (
-			in_array($method, get_class_methods($obj))
-			&& is_callable(array($obj, $method))
-		);
 	}
 }

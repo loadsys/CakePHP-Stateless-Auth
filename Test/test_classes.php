@@ -3,6 +3,7 @@
  * TestClasses used for mocking and injection of dummy classes for Testing the StatelessAuth Plugin
  */
 App::uses('StatelessAuthComponent', 'StatelessAuth.Controller/Component');
+App::uses('TokenLoginLogoutAuthenticate', 'StatelessAuth.Controller/Component/Auth');
 App::uses('AppModel', 'Model');
 App::import('Lib/Error', 'StatelessAuth.StatelessAuthExceptions');
 
@@ -185,13 +186,14 @@ class StatelessAuthUserWithMethods extends CakeTestModel {
 	 * @var string
 	 */
 	public $name = 'User';
+	public $alias = 'User';
 
 	/**
 	 * login method
 	 *
 	 * @return void
 	 */
-	public function login($user) {
+	public function login($user, $pass) {
 		return 'login';
 	}
 
@@ -238,4 +240,12 @@ class HasNoAuthenticateMethodAuthenticate {
  */
 class TestCanary extends AppModel {
 	public $property = 'fizzbuzz';
+}
+
+/**
+ * Expose protected properties in TokenLoginLogoutAuthenticate for testing.
+ */
+class TestTokenLoginLogoutAuthenticate extends TokenLoginLogoutAuthenticate {
+	public $_Collection = null;
+	public $UserModel = null;
 }

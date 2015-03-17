@@ -130,7 +130,7 @@ class ControllerAuthorizeTest extends CakeTestCase {
 			->with($user)
 			->will($this->returnValue(false));
 
-		$this->expectException('ForbiddenByPermissionsException');
+		$this->expectException('StatelessAuthForbiddenByPermissionsException');
 		$this->auth->authorize($user, $request);
 	}
 
@@ -147,24 +147,6 @@ class ControllerAuthorizeTest extends CakeTestCase {
 		$this->expectException('NotImplementedException', 'Controller does not define the mandatory `::$privilege` property used for authorization. See AppController::$privilege for further explanation.');
 		$this->auth->authorize($user, $request);
 	}
-
-	/**
-	 * Test check for $user['Permissions'] key works.
-	 *
-	 * @return void
-	 */
-	public function testAuthorizeWithMissingUserPermisionsKeyFails() {
-		$this->initSUT('SamplePrivilegePropertyController');
-		$user = array(
-			'username' => 'mark',
-			// [Permission] key intentionally missing.
-		);
-		$request = new CakeRequest('/posts/index', false);
-
-		$this->expectException('ForbiddenByPermissionsException');
-		$this->auth->authorize($user, $request);
-	}
-
 
 	/**
 	 * Test false userHasAccess response when debug is on.
@@ -189,7 +171,7 @@ class ControllerAuthorizeTest extends CakeTestCase {
 
 		Configure::write('debug', 2);
 
-		$this->expectException('ForbiddenByPermissionsException');
+		$this->expectException('StatelessAuthForbiddenByPermissionsException');
 		$this->auth->authorize($user, $request);
 	}
 
