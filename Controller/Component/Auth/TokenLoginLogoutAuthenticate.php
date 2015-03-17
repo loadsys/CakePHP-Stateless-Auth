@@ -18,6 +18,32 @@ App::uses('TokenAuthenticate', 'StatelessAuth.Controller/Component/Auth');
 class TokenLoginLogoutAuthenticate extends TokenAuthenticate {
 
 	/**
+	 * Settings for this object.
+	 *
+	 * - `fields` The fields to use to identify a user.
+	 * - `userModel` The model name to use to look up User records, defaults to User.
+	 * - `scope` Additional conditions to use when looking up and authenticating users,
+	 *    i.e. `array('User.is_active' => 1).`
+	 * - `recursive` The value of the recursive key passed to find(). Defaults to 0.
+	 * - `contain` Extra models to contain and return with the User.
+	 *
+	 * @var array
+	 */
+	public $settings = array(
+		'fields' => array(
+			'username' => 'username',
+			'password' => 'password',
+			'token' => 'token',
+		),
+		'userModel' => 'User',
+		'userFields' => null,
+		'scope' => array(),
+		'recursive' => 0,
+		'contain' => array(),
+		'header' => 'Authorization',
+	);
+
+	/**
 	 * Authenticate a user based on the request information.
 	 *
 	 * Called only by Auth->login() to validate the User. The returned User
