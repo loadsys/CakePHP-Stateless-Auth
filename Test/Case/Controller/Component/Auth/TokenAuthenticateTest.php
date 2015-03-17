@@ -51,22 +51,15 @@ class TokenAuthenticateTest extends CakeTestCase {
 
 		$this->Collection = $this->getMock('ComponentCollection');
 		$this->auth = $this->getMock('TokenAuthenticate',
-			array('generateToken'),
+			null,
 			array(
 				$this->Collection,
 				array(
-					'fields' => array('username' => 'username', 'password' => 'password', 'token' => 'token'),
+					'fields' => array('token' => 'token'),
 					'userModel' => 'StatelessAuthUser',
 				),
 			)
 		);
-		$this->auth->expects($this->any())
-			->method('generateToken')
-			->will($this->returnValue('abcde'));
-
-		$password = Security::hash('password', null, true);
-		$User = ClassRegistry::init('StatelessAuthUser');
-		$User->updateAll(array('password' => $User->getDataSource()->value($password)));
 		$this->response = $this->getMock('CakeResponse');
 	}
 
@@ -78,7 +71,7 @@ class TokenAuthenticateTest extends CakeTestCase {
 	public function testConstructor() {
 		$settings = array(
 			'userModel' => 'AuthUser',
-			'fields' => array('username' => 'username', 'password' => 'password', 'token' => 'token'),
+			'fields' => array('token' => 'canary'),
 		);
 		$Controller = new Controller();
 		$this->Collection = new ComponentCollection($Controller);
@@ -123,17 +116,12 @@ class TokenAuthenticateTest extends CakeTestCase {
 	}
 
 	/**
-	 * Test _findUser() failure in authenticate().
+	 * Test failure in authenticate() returns false.
 	 *
 	 * @return void
 	 */
-	public function testAuthenticateFindUserFails() {
+	public function testAuthenticateFails() {
 		$request = new CakeRequest('posts/index', false);
-		$request->data = array('User' => array(
-			'username' => 'does-not-exist',
-			'password' => 'test',
-		));
-
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
 	}
 
@@ -153,7 +141,7 @@ class TokenAuthenticateTest extends CakeTestCase {
 		$this->assertEquals(
 			true,
 			$result,
-			'Logout on simply returns true.'
+			'Logout always returns true.'
 		);
 	}
 
@@ -252,21 +240,46 @@ class TokenAuthenticateTest extends CakeTestCase {
 	 * Test that getToken asks for the expected $_SERVER value and
 	 * processes the result cleanly.
 	 *
+	 * @dataProvider provideGetTokenArgs
+	 * @param string $header The string to return from CakeRequest::header().
+	 * @param string $expected The expected result from TokenAuthenticate::getToken().
 	 * @return void
 	 */
-	public function testGetToken() {
-		$token = 'canary';
+	public function testGetToken($header, $expected) {
 		$request = $this->getMock('CakeRequest', array('header'));
 		$request->staticExpects($this->once())
 			->method('header')
 			->with('Authorization')
-			->will($this->returnValue('Bearer ' . $token));
+			->will($this->returnValue($header));
 
 		$result = $this->auth->getToken($request);
 		$this->assertEquals(
-			'canary',
+			$expected,
 			$result,
 			'getToken() should read the correct `$_SERVER` value and strip any leading `Bearer`.'
+		);
+	}
+
+	/**
+	 * Provide pairs of [Authorization header, expected output] strings to
+	 * test getToken().
+	 *
+	 * @return array
+	 */
+	public function provideGetTokenArgs() {
+		return array(
+			array(
+				'Bearer canary',
+				'canary',
+			),
+			array(
+				'Bearer: canary2',
+				'canary2',
+			),
+			array(
+				'BEARER:    canary3',
+				'canary3',
+			),
 		);
 	}
 }
