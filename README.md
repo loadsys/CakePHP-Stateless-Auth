@@ -17,7 +17,7 @@ The provided component is intended to replace Cake's stock `AuthCompnent` (which
 ## Requirements
 
 * PHP >= 5.4.0
-* CakePHP >= 2.3
+* CakePHP >= 2.6
 
 
 
