@@ -10,13 +10,25 @@
  *
  * @package StatelessAuth.Controller.Component.Auth
  */
-App::uses('FormAuthenticate', 'Controller/Component/Auth');
+App::uses('BaseAuthenticate', 'Controller/Component/Auth');
 
 /**
  * TokenAuthenticate
  */
-class TokenAuthenticate extends FormAuthenticate {
+class TokenAuthenticate extends BaseAuthenticate {
 
+	/**
+	 * Settings for this object.
+	 *
+	 * - `fields` The fields to use to identify a user.
+	 * - `userModel` The model name to use to look up User records, defaults to User.
+	 * - `scope` Additional conditions to use when looking up and authenticating users,
+	 *    i.e. `array('User.is_active' => 1).`
+	 * - `recursive` The value of the recursive key passed to find(). Defaults to 0.
+	 * - `contain` Extra models to contain and return with the User.
+	 *
+	 * @var array
+	 */
 	public $settings = array(
 		'fields' => array(
 			'username' => 'username',
@@ -27,52 +39,45 @@ class TokenAuthenticate extends FormAuthenticate {
 		'userFields' => null,
 		'scope' => array(),
 		'recursive' => 0,
-		'contain' => null,
-		'passwordHasher' => 'Simple'
+		'contain' => array(),
+		'header' => 'Authorization',
 	);
 
 	/**
-	 * Authenticate a user based on the request information.
+	 * Authenticate a user based on the request information alone.
 	 *
-	 * Called only by Auth->login() to validate the User. The returned User
-	 * array must contain the authentication token that was generated so it
-	 * can be passed back to the client for future user.
+	 * This method is triggered by a call to Auth->login(), which either
+	 * sets the "current user" if User data was passed to it, or delegates
+	 * to this method to authenticate a raw CakeRequest and return the
+	 * correct User account if the request is found to be valid.
 	 *
-	 * There are also two side effects:
-	 *   1. The password hash stored in the DB for the User is updated from
-	 *      SHA1 to Blowfish (if necessary).
-	 *   2. The last_login_at and token fields are written back into the
-	 *      User model record.
+	 * In a stateful system, this method would check a POSTed
+	 * username/password against the database and start a $_SESSION if a
+	 * valid User record was found. From then on, a browser cookie is
+	 * usually passed back to the server with each new request, which from
+	 * then on acts the same as an Authorization HTTP header in a stateless
+	 * system.
+	 *
+	 * In a stateless system like this one, there is no username and password
+	 * to log in since there is no $_SESSION maintained between requests.
+	 * *Every* request must contain the equivalent of a session cookie (the
+	 * HTTP Authorization header.) Therefore a call to Auth->login() that
+	 * doesn't contain a specific User record for use can do nothing
+	 * different from authenticating a "normal" request and must simply
+	 * check for the auth token in the request headers like getUser() does.
+	 *
+	 * In normal use, a Cake app using this component would never make a
+	 * call to Auth->login() in this manner, using it only when it was
+	 * necessary to change "the logged in user" mid-request by explicitly
+	 * providing the User record the StatelessAuthComponent should use to
+	 * Auth->login($user).
 	 *
 	 * @param CakeRequest $request Request to get authentication information from.
 	 * @param CakeResponse $response A response object that can have headers added.
-	 * @return mixed Either false on failure, or an array of user data on success.
+	 * @return array|false An array of user data on success, or false on failure.
 	 */
 	public function authenticate(CakeRequest $request, CakeResponse $response) {
-		$userModel = $this->settings['userModel'];
-		list(, $model) = pluginSplit($userModel);
-		$fields = $this->settings['fields'];
-
-		// Add a surrounding [User] array, if not present.
-		if (isset($request->data[$fields['username']])) {
-			$request->data = array($model => $request->data);
-		}
-
-		// Check the fields.
-		if (!$this->_checkFields($request, $model, $fields)) {
-			return false;
-		}
-
-		// Call the login method.
-		$user = $this->getModel()->login(
-			$request->data[$model][$fields['username']],
-			$request->data[$model][$fields['password']]
-		);
-		if (!$user) {
-			return false;
-		}
-
-		return $user;
+		return $this->getUser($request);
 	}
 
 	/**
@@ -90,22 +95,23 @@ class TokenAuthenticate extends FormAuthenticate {
 	}
 
 	/**
-	 * Get a User based on information in the request. Used by stateless authentication
-	 * systems like basic and digest auth. Powers Auth->user() in a stateless system.
+	 * Get a User model record based on information in the request.
+	 *
+	 * Powers Auth->user() in a stateless system.
 	 *
 	 * @param CakeRequest $request Request object.
-	 * @return mixed Either false or an array of user information
-	 * @throws UnauthorizedJsonApiException If there is no HTTP_AUTHORIZATION header present, or an unexpired User session could not be retrieve using it.
+	 * @return array|false An array with the contents of the [User] record on success, false on failure.
+	 * @throws StatelessAuthUnauthorizedException If there is no `Authorization` header present, or a User record could not be retrieved using it.
 	 */
 	public function getUser(CakeRequest $request) {
-		$token = $this->getToken($request);
-		$UserModel = $this->getModel();
-		$user = $this->getUserForToken($UserModel, $token);
-
-		if (empty($user['User'])) {
-			throw new UnauthorizedJsonApiException('Missing, invalid or expired token present in request. Include an HTTP_AUTHORIZATION header, or please login to obtain a token.');
+		$userModelName = $this->settings['userModel'];
+		$user = $this->findUserForToken($this->getToken($request));
+		if (empty($user[$userModelName])) {
+			throw new StatelessAuthUnauthorizedException(
+				'Missing, invalid or expired token present in request. Include an Authorization header.'
+			);
 		}
-		return (!empty($user['User']) ? $user['User'] : false);
+		return (!empty($user[$userModelName]) ? $user[$userModelName] : false);
 	}
 
 	/**
@@ -118,35 +124,40 @@ class TokenAuthenticate extends FormAuthenticate {
 	}
 
 	/**
-	 * Try to get the HTTP_AUTHORIZATION header value from the request.
+	 * Try to get the HTTP `Authorization` header value from the request.
 	 *
-	 * Permitted values may optionally be prefixed by `Bearer `.
+	 * Permitted values may optionally be prefixed by `Bearer ` or `Bearer: `.
 	 *
 	 * @param CakeRequest $request Request object.
 	 * @return string The (possibly empty) string representing the provided auth token.
 	 */
 	public function getToken(CakeRequest $request) {
-		$token = str_ireplace('Bearer ', '', $request->header('Authorization'));
+		$token = preg_replace('/^Bearer:?\s+/i', '', $request->header($this->settings['header']));
 		return $token;
 	}
 
 	/**
-	 * find a user for the token
+	 * Attempt to fetch a User model record for the provided auth token.
 	 *
-	 * @param  [type] $userModel [description]
-	 * @param  [type] $token     [description]
-	 * @return [type]            [description]
+	 * Uses this object's configuration settings to determine what model to
+	 * query, what field to check against, and what additional conditions
+	 * to impose upon the query.
+	 *
+	 * @param string $tokenThe token obtained from the HTTP request headers to use to look up the User record.
+	 * @return array|false An array containing the [User] record on success, false on failure.
 	 */
-	public function getUserForToken($userModel, $token) {
-		$options = array(
-			'conditions' => array(
-				$this->settings['userModel'] . '.' . $this->settings['fields']['token'] => $token,
-			),
+	protected function findUserForToken($token) {
+		$conditions = array(
+			$this->settings['userModel'] . '.' . $this->settings['fields']['token'] => $token,
 		);
- 		if (!($user = $userModel->find('first', $options))) {
-			return $user;
-		}
+		$conditions = array_merge($conditions, $this->settings['scope']);
 
+		$options = array(
+			'conditions' => $conditions,
+			'recursive' => $this->settings['recursive'],
+			'contain' => $this->settings['contain'],
+		);
+ 		$user = $this->getModel()->find('first', $options);
 		return $user;
 	}
 
@@ -154,10 +165,9 @@ class TokenAuthenticate extends FormAuthenticate {
 	 * Confirm that a method is actually defined (and not shadowed by
 	 * `__call()` for the given object.)
 	 *
-	 * @access	protected
-	 * @param	string	$method	The name of the method to check.
-	 * @param	object	$obj	The instantiated object to check.
-	 * @return	boolean			True if the named method exists (not via __call()), false otherwise.
+	 * @param string $method The name of the method to check.
+	 * @param object $obj The instantiated object to check.
+	 * @return bool True if the named method exists (not via __call()), false otherwise.
 	 */
 	protected function isActualClassMethod($method, $obj) {
 		return (
@@ -165,5 +175,4 @@ class TokenAuthenticate extends FormAuthenticate {
 			&& is_callable(array($obj, $method))
 		);
 	}
-
 }

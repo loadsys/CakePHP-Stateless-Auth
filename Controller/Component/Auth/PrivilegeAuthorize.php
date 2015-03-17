@@ -102,7 +102,7 @@ class PrivilegeAuthorize extends BaseAuthorize {
 	public function authorize($user, CakeRequest $request) {
 		if (method_exists($this->_Controller, 'isAuthorized')) {
 			if (!call_user_func(array($this->_Controller, 'isAuthorized'), $user)) {
-				throw new ForbiddenByPermissionsException(null, 'Custom isAuthorized() method denied access.');
+				throw new StatelessAuthForbiddenByPermissionsException(null, 'Custom isAuthorized() method denied access.');
 			} else {
 				return true;
 			}
@@ -120,13 +120,13 @@ class PrivilegeAuthorize extends BaseAuthorize {
 			$user = $user['User'];
 		}
 		if (empty($user['Permission'])) {
-			throw new ForbiddenByPermissionsException(null, 'No User Permission object available.');
+			throw new StatelessAuthForbiddenByPermissionsException(null, 'No User Permission object available.');
 		}
 		$permissions = $user['Permission'];
 
 		if (!$this->userHasAccess($permissions, $privilege, $action)) {
 			if (Configure::read('debug') > 0) {
-				throw new ForbiddenByPermissionsException();
+				throw new StatelessAuthForbiddenByPermissionsException();
 			} else {
 				throw new NotFoundException(); // **DO NOT** include a message that would differentiate this case from other 404's!
 			}

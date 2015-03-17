@@ -4,6 +4,7 @@
  */
 App::uses('StatelessAuthComponent', 'StatelessAuth.Controller/Component');
 App::uses('AppModel', 'Model');
+App::import('Lib/Error', 'StatelessAuth.StatelessAuthExceptions');
 
 /**
  * Exposes protected properties via setters.

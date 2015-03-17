@@ -232,14 +232,12 @@ class StatelessAuthComponent extends Component {
 	}
 
 	/**
-	 * Get the current user.
+	 * Get the current user stored in the Component.
 	 *
-	 * Will prefer the static user cache over sessions. The static user
-	 * cache is primarily used for stateless authentication. For stateful authentication,
-	 * cookies + sessions will be used.
+	 * Returns a specific property from the user record if $key is provided.
 	 *
-	 * @param string $key field to retrieve. Leave null to get entire User record
-	 * @return array|null User record. or null if no user is logged in.
+	 * @param string $key Field to retrieve. Leave null to get entire User record.
+	 * @return mixed User record, User field value, or null if no User is logged in.
 	 * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#accessing-the-logged-in-user
 	 */
 	public function user($key = null) {
@@ -287,7 +285,7 @@ class StatelessAuthComponent extends Component {
 	 */
 	public function identify(CakeRequest $request, CakeResponse $response) {
 		$result = $this->authenticateObject->authenticate($request, $response);
-		if (!empty($result) && is_array($result) && array_key_exists('token', $result)) {
+		if (!empty($result) && is_array($result) && array_key_exists('token', $result)) { //@TODO: the [token] field can't be hardcoded here as it depends on a setting internal to the given Authenticate object. It would also be a violation of SoC for the StatelessAuthComponent to have to know about the Authenticate object's internal ::$settings keys/values to look up the correct "token" field name. We'll need to think of an alternative.
 			return $result;
 		}
 		return false;
