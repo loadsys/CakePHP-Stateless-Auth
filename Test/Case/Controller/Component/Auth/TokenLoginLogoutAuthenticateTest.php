@@ -21,7 +21,7 @@ App::uses('CakeRequest', 'Network');
 App::uses('CakeResponse', 'Network');
 
 // test classes for mocking
-//require_once dirname(dirname(dirname(dirname(dirname(__FILE__))))) . DS . "test_classes.php";
+require_once dirname(dirname(dirname(dirname(dirname(__FILE__))))) . DS . "test_classes.php";
 
 /**
  * Test case for FormAuthentication
