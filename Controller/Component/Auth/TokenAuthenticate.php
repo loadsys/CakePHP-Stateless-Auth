@@ -22,6 +22,7 @@ class TokenAuthenticate extends BaseAuthenticate {
 	 *
 	 * - `fields` The fields to use to identify a user.
 	 * - `userModel` The model name to use to look up User records, defaults to User.
+	 * - `userFields` Array of fields to return from the User record.
 	 * - `scope` Additional conditions to use when looking up and authenticating users,
 	 *    i.e. `array('User.is_active' => 1).`
 	 * - `recursive` The value of the recursive key passed to find(). Defaults to 0.
@@ -31,8 +32,6 @@ class TokenAuthenticate extends BaseAuthenticate {
 	 */
 	public $settings = array(
 		'fields' => array(
-			'username' => 'username',
-			'password' => 'password',
 			'token' => 'token',
 		),
 		'userModel' => 'User',
@@ -77,7 +76,12 @@ class TokenAuthenticate extends BaseAuthenticate {
 	 * @return array|false An array of user data on success, or false on failure.
 	 */
 	public function authenticate(CakeRequest $request, CakeResponse $response) {
-		return $this->getUser($request);
+		try {
+			$user = $this->getUser($request);
+		} catch (Exception $e) {
+			return false;
+		}
+		return $user;
 	}
 
 	/**
@@ -111,7 +115,7 @@ class TokenAuthenticate extends BaseAuthenticate {
 				'Missing, invalid or expired token present in request. Include an Authorization header.'
 			);
 		}
-		return (!empty($user[$userModelName]) ? $user[$userModelName] : false);
+		return $user[$userModelName];
 	}
 
 	/**
@@ -157,6 +161,14 @@ class TokenAuthenticate extends BaseAuthenticate {
 			'recursive' => $this->settings['recursive'],
 			'contain' => $this->settings['contain'],
 		);
+
+		if (
+			is_array($this->settings['userFields'])
+			&& count($this->settings['userFields'])
+		) {
+			$options['fields'] = $this->settings['userFields'];
+		}
+
  		$user = $this->getModel()->find('first', $options);
 		return $user;
 	}

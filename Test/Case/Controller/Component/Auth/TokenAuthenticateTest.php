@@ -37,8 +37,8 @@ class TokenAuthenticateTest extends CakeTestCase {
 	 */
 	public $fixtures = array(
 		'plugin.stateless_auth.user',
-		'plugin.stateless_auth.permission',
-		'core.auth_user',
+		//'plugin.stateless_auth.permission',
+		//'core.auth_user',
 	);
 
 	/**
@@ -95,11 +95,6 @@ class TokenAuthenticateTest extends CakeTestCase {
 	 */
 	public function testAuthenticateSuccess() {
 		$request = new CakeRequest('posts/index', false);
-		$request->data = array(  // !! No wrapping [User] array should still be accepted !!
-			'username' => 'test',
-			'password' => 'test',
-		);
-		$now = date_create()->getTimestamp();
 
 		// Set up a fake User model to return a dummy record.
 		$expected = array(
@@ -108,20 +103,15 @@ class TokenAuthenticateTest extends CakeTestCase {
 				'token' => 'abcde',
 			),
 		);
-		$userModel = $this->getMockForModel('StatelessAuthUser', array('login'));
-		$userModel->expects($this->once())
-			->method('login')
-			->with('test', 'test')
-			->will($this->returnValue($expected));
 
-		// Replace our accessor method to return the dummy User model instance.
 		$this->auth = $this->getMock('TokenAuthenticate',
-			array('getModel'),
+			array('getUser'),
 			array(new ComponentCollection(), array())
 		);
 		$this->auth->expects($this->once())
-			->method('getModel')
-			->will($this->returnValue($userModel));
+			->method('getUser')
+			->with($request)
+			->will($this->returnValue($expected));
 
 		// Execute the SUT and check the direct returned result.
 		$result = $this->auth->authenticate($request, $this->response);
@@ -130,21 +120,6 @@ class TokenAuthenticateTest extends CakeTestCase {
 			$result,
 			'authenticate() must pass back the User records provided by the User model.'
 		);
-	}
-
-	/**
-	 * Test _checkFields() failure in authenticate().
-	 *
-	 * @return void
-	 */
-	public function testAuthenticateCheckFieldsFails() {
-		$request = new CakeRequest('posts/index', false);
-		$request->data = array('User' => array(
-			'username' => 'test',
-			// missing [password] field should cause _checkFields() to fail.
-		));
-
-		$this->assertFalse($this->auth->authenticate($request, $this->response));
 	}
 
 	/**
@@ -201,19 +176,16 @@ class TokenAuthenticateTest extends CakeTestCase {
 
 		// Replace our accessor methods to return the dummy User model instance and dummy token.
 		$this->auth = $this->getMock('TokenAuthenticate',
-			array('getModel', 'getToken', 'getUserForToken'),
+			array('getToken', 'findUserForToken'),
 			array(new ComponentCollection(), array())
 		);
-		$this->auth->expects($this->once())
-			->method('getModel')
-			->will($this->returnValue($userModel));
 		$this->auth->expects($this->once())
 			->method('getToken')
 			->with($request)
 			->will($this->returnValue($token));
 		$this->auth->expects($this->once())
-			->method('getUserForToken')
-			->with($userModel, $token)
+			->method('findUserForToken')
+			->with($token)
 			->will($this->returnValue($user));
 
 		// Execute the SUT and check the direct returned result.
@@ -239,17 +211,13 @@ class TokenAuthenticateTest extends CakeTestCase {
 
 		// Replace our accessor methods to return the dummy User model instance and dummy token.
 		$this->auth = $this->getMock('TokenAuthenticate',
-			array('getModel', 'getToken', 'getUserForToken'),
+			array('getToken', 'findUserForToken'),
 			array(new ComponentCollection(), array())
 		);
 
 		$this->auth->expects($this->once())
-			->method('getModel')
-			->will($this->returnValue($userModel));
-
-		$this->auth->expects($this->once())
-			->method('getUserForToken')
-			->with($userModel, $token)
+			->method('findUserForToken')
+			->with($token)
 			->will($this->returnValue(false));
 
 		$this->auth->expects($this->once())
@@ -259,8 +227,8 @@ class TokenAuthenticateTest extends CakeTestCase {
 
 		// Execute the SUT and check the direct returned result.
 		$this->expectException(
-			'UnauthorizedJsonApiException',
-			'Missing, invalid or expired token present in request. Include an HTTP_AUTHORIZATION header, or please login to obtain a token.'
+			'StatelessAuthUnauthorizedException',
+			'Missing, invalid or expired token present in request. Include an Authorization header.'
 		);
 		$result = $this->auth->getUser($request);
 	}
