@@ -281,7 +281,7 @@ class StatelessAuthComponent extends Component {
 	 */
 	public function identify(CakeRequest $request, CakeResponse $response) {
 		$result = $this->authenticateObject->authenticate($request, $response);
-		if (!empty($result) && is_array($result) && array_key_exists('token', $result)) { //@TODO: the [token] field can't be hardcoded here as it depends on a setting internal to the given Authenticate object. It would also be a violation of SoC for the StatelessAuthComponent to have to know about the Authenticate object's internal ::$settings keys/values to look up the correct "token" field name. We'll need to think of an alternative.
+		if (!empty($result) && is_array($result)) {
 			return $result;
 		}
 		return false;
