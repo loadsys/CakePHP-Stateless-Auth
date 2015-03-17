@@ -5,6 +5,7 @@
 App::uses('StatelessAuthComponent', 'StatelessAuth.Controller/Component');
 App::uses('TokenLoginLogoutAuthenticate', 'StatelessAuth.Controller/Component/Auth');
 App::uses('AppModel', 'Model');
+App::uses('Controller', 'Controller');
 App::import('Lib/Error', 'StatelessAuth.StatelessAuthExceptions');
 
 /**
@@ -186,7 +187,6 @@ class StatelessAuthUserWithMethods extends CakeTestModel {
 	 * @var string
 	 */
 	public $name = 'User';
-	public $alias = 'User';
 
 	/**
 	 * login method

@@ -140,7 +140,19 @@ class TokenLoginLogoutAuthenticateTest extends CakeTestCase {
 	}
 
 	/**
-	 * Test checkFields() failure in authenticate().
+	 * Test checkFields() failure in authenticate() whe no POST data supplied.
+	 *
+	 * @return void
+	 */
+	public function testAuthenticateEmptyDataFails() {
+		$request = new CakeRequest('posts/index', false);
+		$request->data = array();
+
+		$this->assertFalse($this->auth->authenticate($request, $this->response));
+	}
+
+	/**
+	 * Test checkFields() failure in authenticate() when missing username/password POST data.
 	 *
 	 * @return void
 	 */
