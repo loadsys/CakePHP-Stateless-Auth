@@ -8,7 +8,7 @@ php:
 env:
   global:
     - PLUGIN_NAME=StatelessAuth
-    - REQUIRE="phpunit/phpunit:~3.7.33 satooshi/php-coveralls:~0.6"
+    - REQUIRE=""
 
   matrix:
     - DB=mysql CAKE_VERSION=2.6
