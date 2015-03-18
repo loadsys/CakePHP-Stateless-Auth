@@ -6,93 +6,32 @@ php:
   - 5.6
 
 env:
-  - CAKE_VERSION=2.6.3 DB=mysql
-  #- CAKE_VERSION=master DB=mysql
+  global:
+    - PLUGIN_NAME=StatelessAuth
+    - REQUIRE="phpunit/phpunit:~3.7.33 satooshi/php-coveralls:~0.6"
+
+  matrix:
+    - DB=mysql CAKE_VERSION=2.6
 
 matrix:
   fast_finish: true
-
-before_install:
-  - composer self-update
-
-install:
-  - git clone git://github.com/cakephp/cakephp ../cakephp && cd ../cakephp && git checkout $CAKE_VERSION
-  - cp -R ../CakePHP-Stateless-Auth plugins/StatelessAuth
-  - chmod -R 777 ../cakephp/app/tmp
-  - sh -c "composer global require 'phpunit/phpunit=3.7.33'"
-  - sh -c "ln -s ~/.composer/vendor/phpunit/phpunit/PHPUnit ../cakephp/vendors/PHPUnit"
+  include:
+    - php: 5.6
+      env:
+	- COVERALLS=1
+    - php: 5.6
+      env:
+	- PHPCS=1
 
 before_script:
-  - phpenv rehash
-  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test;'; fi"
-  - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi"
-  - set +H
-  - echo "<?php
-    class DATABASE_CONFIG {
-    private \$identities = array(
-      'mysql' => array(
-        'datasource' => 'Database/Mysql',
-        'host' => '0.0.0.0',
-        'login' => 'travis'
-      ),
-      'pgsql' => array(
-        'datasource' => 'Database/Postgres',
-        'host' => '127.0.0.1',
-        'login' => 'postgres',
-        'database' => 'cakephp_test',
-        'schema' => array(
-          'default' => 'public',
-          'test' => 'public'
-        )
-      )
-    );
-    public \$default = array(
-      'persistent' => false,
-      'host' => '',
-      'login' => '',
-      'password' => '',
-      'database' => 'cakephp_test',
-      'prefix' => ''
-    );
-    public \$test = array(
-      'persistent' => false,
-      'host' => '',
-      'login' => '',
-      'password' => '',
-      'database' => 'cakephp_test',
-      'prefix' => ''
-    );
-    public function __construct() {
-      \$db = 'mysql';
-      if (!empty(\$_SERVER['DB'])) {
-        \$db = \$_SERVER['DB'];
-      }
-      foreach (array('default', 'test') as \$source) {
-        \$config = array_merge(\$this->{\$source}, \$this->identities[\$db]);
-        if (is_array(\$config['database'])) {
-          \$config['database'] = \$config['database'][\$source];
-        }
-        if (!empty(\$config['schema']) && is_array(\$config['schema'])) {
-          \$config['schema'] = \$config['schema'][\$source];
-        }
-        \$this->{\$source} = \$config;
-      }
-    }
-    }" > ../cakephp/app/Config/database.php
+  - git clone -b master https://github.com/FriendsOfCake/travis.git --depth 1 ../travis
+  - ../travis/before_script.sh
 
 script:
-  - ./lib/Cake/Console/cake test StatelessAuth AllStatelessAuth --stderr
+  - ../travis/script.sh
 
-
-# After a Successful Build
 after_success:
+  - ../travis/after_success.sh
 
-# After a Failed Build
-after_failure:
-
-# After every Build
-after_script:
-
-# Notifications Settings
 notifications:
   email: false
