@@ -23,9 +23,6 @@ class StatelessAuthComponentTest extends CakeTestCase {
 	 */
 	public $fixtures = array(
 		'plugin.stateless_auth.user',
-		'plugin.stateless_auth.permission',
-		'plugin.stateless_auth.privilege',
-		'plugin.stateless_auth.i18n',
 	);
 
 
@@ -189,7 +186,7 @@ class StatelessAuthComponentTest extends CakeTestCase {
 			'Must return the ::user property of the component when none is provided as an arg.'
 		);
 
-		$user = array('Permission' => array('foo' => 'bar'));
+		$user = array('Subkey' => array('foo' => 'bar'));
 		$this->assertEquals(
 			$user,
 			$this->Component->whichUser($user),
@@ -208,7 +205,7 @@ class StatelessAuthComponentTest extends CakeTestCase {
 				'id' => '2',
 				'username' => 'mark',
 				'group_id' => 1,
-				'Permission' => array(
+				'Subkey' => array(
 					'foo' => 'read',
 					'bar' => 'write',
 					'baz' => 'none',
@@ -223,8 +220,8 @@ class StatelessAuthComponentTest extends CakeTestCase {
 		$result = $this->Component->user('username');
 		$this->assertEquals($data['User']['username'], $result);
 
-		$result = $this->Component->user('Permission.foo');
-		$this->assertEquals($data['User']['Permission']['foo'], $result);
+		$result = $this->Component->user('Subkey.foo');
+		$this->assertEquals($data['User']['Subkey']['foo'], $result);
 
 		$result = $this->Component->user('invalid');
 		$this->assertEquals(null, $result);
@@ -301,22 +298,6 @@ class StatelessAuthComponentTest extends CakeTestCase {
 	}
 
 	/**
-	 * Test that identify returns false on a failure
-	 *
-	 * @return void
-	 */
-	public function testIdentifyReturnsFalseUserHasNoToken() {
-		$user = array(
-			'id' => 1,
-			'username' => 'mark',
-			//'token' => 'sample-token',
-		);
-		$this->initComponentAuthObjects($user, true);
-		$result = $this->Component->identify($this->Component->request, $this->Component->response);
-		$this->assertFalse($result);
-	}
-
-	/**
 	 * Test that identify returns the user on success
 	 *
 	 * @return void
@@ -359,68 +340,6 @@ class StatelessAuthComponentTest extends CakeTestCase {
 
 		// Confirm we recieved the canary value back.
 		$this->assertEquals($expected, $result);
-	}
-
-	/**
-	 * Provide [method, privilege, access, backend, msg] sets to
-	 * testIsWriteAdminAndIsReadAdmin().
-	 *
-	 * @return array
-	 */
-	public function provideIsAdminArgs() {
-		return array(
-			array(
-				'isWriteAdmin', 'admin', 'write', 'userCanWrite', // method, privilege, access, backend method
-				'::isWriteAdmin() must defer to PrivilegeAuthorize::userCanWrite().' // assertion failure message
-			),
-			array(
-				'isReadAdmin', 'admin', 'read', 'userCanRead',
-				'::isReadAdmin() must defer to PrivilegeAuthorize::userCanRead().'
-			),
-			array(
-				'userCanWrite', null, 'write', 'userCanWrite',
-				'::userCanWrite() must defer to PrivilegeAuthorize::userCanWrite().'
-			),
-			array(
-				'userCanRead', null, 'read', 'userCanRead',
-				'::userCanRead() must defer to PrivilegeAuthorize::userCanRead().'
-			),
-		);
-	}
-
-	/**
-	 * Test isWriteAdmin(), isReadAdmin(), userCanWrite() and userCanRead()
-	 * defaults & proxying.
-	 *
-	 * @dataProvider provideIsAdminArgs
-	 * @param string $privilege The name of the Controller::$privilege to check.
-	 * @param string $access The access level the User has for the given $privilege.
-	 * @param string $backend The PrivilegeAuthorize method to mock.
-	 * @param string $msg Optional PHPUnit assertion failure message.
-	 * @return void
-	 */
-	public function testIsWriteAdminAndIsReadAdmin($method, $privilege, $access, $backend, $msg = '') {
-
-		$user = array('Permission' => array(
-			$privilege => $access,
-		));
-
-		$this->Component->authorizeObject = $this->getMock('PrivilegeAuthorize',
-			array($backend),
-			array(),
-			'',
-			false
-		);
-		$this->Component->authorizeObject->expects($this->once())
-			->method($backend)
-			->with($user['Permission'], $privilege)
-			->will($this->returnValue('canary'));
-
-		$this->assertEquals(
-			'canary',
-			$this->Component->{$method}($user, $privilege),
-			$msg
-		);
 	}
 
 	/**

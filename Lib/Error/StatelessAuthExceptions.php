@@ -161,7 +161,7 @@ class StatelessAuthUnauthorizedException extends StatelessAuthException {
 
 /**
  * Used when a User's Permissions forbid access to the requested section of
- * the app.
+ * the app. @TODO: Leave in FM.
  */
 class StatelessAuthForbiddenByPermissionsException extends StatelessAuthException {
 

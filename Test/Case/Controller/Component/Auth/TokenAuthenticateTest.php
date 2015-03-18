@@ -37,8 +37,6 @@ class TokenAuthenticateTest extends CakeTestCase {
 	 */
 	public $fixtures = array(
 		'plugin.stateless_auth.user',
-		//'plugin.stateless_auth.permission',
-		//'core.auth_user',
 	);
 
 	/**

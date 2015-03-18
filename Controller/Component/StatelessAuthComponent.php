@@ -3,7 +3,8 @@
  * Authorization component
  *
  * Provides access to convenience methods for checking a User's access to
- * sections of the app using the Permission system.
+ * sections of the app. Uses the basic IsAuthorized authorize object by
+ * default.
  *
  */
 
@@ -14,7 +15,8 @@ App::uses('Component', 'Controller');
  * Authentication and authorization control component class.
  *
  * Provides stateless authentication via `Bearer` header tokens and
- * authorization using the app's Privilege/Permission system.
+ * authorization using the basic IsAuthorized authorize object. (Both by
+ * default.)
  *
  * @package StatelessAuth.Controller.Component
  */
@@ -55,12 +57,12 @@ class StatelessAuthComponent extends Component {
 	public $allowedActions = array();
 
 	/**
-	 * An array of settings for the authentication objects to use for authenticating users.
+	 * An array of settings for the authentication object to use for authenticating users. @TODO: Is this even getting used beyond the `className`??
 	 *
 	 * {{{
 	 *	$this->Auth->authenticate = array(
-	 *		'className' => 'Token'
-	 *		'userModel' => 'Users.User'
+	 *		'className' => 'StatelessAuth.Token'
+	 *		'userModel' => 'User'
 	 *	);
 	 * }}}
 	 *
@@ -71,7 +73,7 @@ class StatelessAuthComponent extends Component {
 	 * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html
 	 */
 	public $authenticate = array(
-		'className' => 'Token',
+		'className' => 'StatelessAuth.Token',
 		'userModel' => 'User',
 	);
 
@@ -80,8 +82,7 @@ class StatelessAuthComponent extends Component {
 	 *
 	 * {{{
 	 *	$this->Auth->authorize = array(
-	 *		'className' => 'Privilege'  //@TODO: Replace with a more general `StatelessAuth.isAuthorizedAuthorize` object
-	 *		'userModel' => 'Users.User'
+	 *		'className' => 'StatelessAuth.IsAuthorized'
 	 *	);
 	 * }}}
 	 *
@@ -92,7 +93,7 @@ class StatelessAuthComponent extends Component {
 	 * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html
 	 */
 	public $authorize = array(
-		'className' => 'StatelessAuth.Privilege',  //@TODO: Replace with a more general `isAuthorizedAuthorize` object
+		'className' => 'StatelessAuth.IsAuthorized',
 		'userModel' => 'User',
 	);
 
@@ -114,16 +115,9 @@ class StatelessAuthComponent extends Component {
 	protected $action;
 
 	/**
-	 * The logged-in User represented by the provided HTTP_AUTHORIZATION header token value.
+	 * The logged-in User represented by the provided HTTP `Authorization` header token value.
 	 *
-	 * This User's associated [Permission]s will be checked during
-	 * authorization queries.
-	 *
-	 * Initialized to $controller->Auth->user() during startup(). The record
-	 * is **expected** to include a [Permission] key containing
-	 * [Privilege.slug => Permission.level] pairs as produced by
-	 * Permission::findForUserId(). All checks will fail (return false) if
-	 * this is not present.
+	 * Initialized to $controller->Auth->user() during startup().
 	 *
 	 * @var array
 	 */
@@ -361,58 +355,6 @@ class StatelessAuthComponent extends Component {
 	}
 
 	/**
-	 * Convenience wrapper for PrivilegeAuthorize::userCanWrite('admin').
-	 *
-	 * @param array $user A User model record, including the [Permission] key, typically as returned by Auth->user(). If empty, Auth->user() is automatically used.
-	 * @return bool True if the User has admin:write access.
-	 */
-	public function isWriteAdmin($user = null) {
-		$user = $this->whichUser($user);
-		return $this->authorizeObject->userCanWrite($user['Permission'], 'admin');
-	}
-
-	/**
-	 * Convenience wrapper for PrivilegeAuthorize::userCanRead('admin').
-	 *
-	 * @param array $user A User model record, including the [Permission] key, typically as returned by Auth->user(). If empty, Auth->user() is automatically used.
-	 * @return bool True if the User has admin:read access.
-	 */
-	public function isReadAdmin($user = null) {
-		$user = $this->whichUser($user);
-		return $this->authorizeObject->userCanRead($user['Permission'], 'admin');
-	}
-
-	/**
-	 * Wrapper for PrivilegeAuthorize::userCanWrite().
-	 *
-	 * @param array $user A User model record, including the [Permission] key, typically as returned by Auth->user(). If empty, Auth->user() is automatically used.
-	 * @param string $privilege The Privilege.slug in question for the current request. If empty, the current controller's ::$privilege property is used.
-	 * @return bool True if the current User has read (or write) access to the requested privilege.
-	 */
-	public function userCanWrite($user = null, $privilege = null) {
-		$user = $this->whichUser($user);
-		if (is_null($privilege)) {
-			$privilege = $this->privilege;
-		}
-		return $this->authorizeObject->userCanWrite($user['Permission'], $privilege);
-	}
-
-	/**
-	 * Wrapper for PrivilegeAuthorize::userCanRead().
-	 *
-	 * @param array $user A User model record, including the [Permission] key, typically as returned by Auth->user(). If empty, Auth->user() is automatically used.
-	 * @param string $privilege The Privilege.slug in question for the current request. If empty, the current controller's ::$privilege property is used.
-	 * @return bool True if the current User has read access to the requested privilege.
-	 */
-	public function userCanRead($user = null, $privilege = null) {
-		$user = $this->whichUser($user);
-		if (is_null($privilege)) {
-			$privilege = $this->privilege;
-		}
-		return $this->authorizeObject->userCanRead($user['Permission'], $privilege);
-	}
-
-	/**
 	 * Loads the configured authentication object.
 	 *
 	 * @return mixed An instance of the loaded object.
@@ -514,7 +456,7 @@ class StatelessAuthComponent extends Component {
 	 * be used. If that is also null, an exception is thrown. This is used
 	 * in all of the convenience functions provided by this Component to validate arguments.
 	 *
-	 * @param array $user User array as provided by AuthComponent::user(), including a [Permission] key.
+	 * @param array $user User array as provided by AuthComponent::user().
 	 * @throws RuntimeException When both $user and ::$defaultuser are null.
 	 * @return array
 	 */

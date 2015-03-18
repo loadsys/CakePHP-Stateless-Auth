@@ -93,7 +93,7 @@ class TokenLoginLogoutAuthenticate extends TokenAuthenticate {
 		if (isset($request->data[$fields['username']])) {
 			$request->data = array($alias => $request->data);
 		}
-// debug($request->data);
+
 		// Check the fields.
 		if (!$this->checkFields($request, $alias)) {
 			return false;
@@ -177,9 +177,6 @@ class TokenLoginLogoutAuthenticate extends TokenAuthenticate {
 	 * @return bool False if the fields have not been supplied. True if they exist.
 	 */
 	protected function checkFields(CakeRequest $request, $model) {
-// debug($model);
-// debug($this->settings);
-// debug($request->data);
 		if (empty($request->data[$model])) {
 			return false;
 		}
