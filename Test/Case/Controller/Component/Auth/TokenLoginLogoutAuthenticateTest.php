@@ -122,7 +122,7 @@ class TokenLoginLogoutAuthenticateTest extends CakeTestCase {
 	 */
 	public function testAuthenticateSuccess() {
 		$request = new CakeRequest('posts/index', false);
-		$request->data = array(  // !! No wrapping [User] array should still be accepted !!
+		$request->data = array( // !! No wrapping [User] array should still be accepted !!
 			'username' => 'test',
 			'password' => 'test',
 		);
@@ -157,7 +157,7 @@ class TokenLoginLogoutAuthenticateTest extends CakeTestCase {
 		$request = new CakeRequest('posts/index', false);
 		$request->data = array('StatelessAuthUserWithMethods' => array(
 			'username' => 'test',
-			'password' => null,  // Should count as "empty" and fail checkFields().
+			'password' => null, // Should count as "empty" and fail checkFields().
 		));
 
 		$this->assertFalse($this->auth->authenticate($request, $this->response));

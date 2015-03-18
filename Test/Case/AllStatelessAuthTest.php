@@ -3,6 +3,7 @@
  * Custom test suite to execute all StatelessAuth Plugin tests.
  */
 class AllStatelessAuthTest extends PHPUnit_Framework_TestSuite {
+
 	public static $suites = array(
 		'AllStatelessAuthLibsTest.php',
 		'AllStatelessAuthBehaviorsTest.php',

@@ -13,14 +13,41 @@ App::import('Lib/Error', 'StatelessAuth.StatelessAuthExceptions');
  *
  */
 class TestStatelessAuthComponent extends StatelessAuthComponent {
+
+	/**
+	 * Expose the authenticateObject to allow mock injection.
+	 *
+	 * @var object
+	 */
 	public $authenticateObject;
+
+	/**
+	 * Expose the authorizeObject to allow mock injection.
+	 *
+	 * @var object
+	 */
 	public $authorizeObject;
+
+	/**
+	 * Expose a setter to allow injection of current user.
+	 *
+	 * @param array $user User data to inject into the component.
+	 * @return void
+	 */
 	public function setUser($user) {
 		$this->user = $user;
 	}
+
+	/**
+	 * Expose protected method for direct testing.
+	 *
+	 * @param array $user User data to inject into the component.
+	 * @return mixed
+	 */
 	public function whichUser($user = null) {
 		return parent::whichUser($user);
 	}
+
 }
 
 /**
@@ -39,7 +66,7 @@ class HasPrivilegePropertyController extends Controller {
 	/**
 	 * privilege property
 	 *
-	 * @var array
+	 * @var string
 	 */
 	public $privilege = 'users';
 
@@ -67,6 +94,8 @@ class HasPrivilegePropertyController extends Controller {
 	/**
 	 * construct method
 	 *
+	 * @param CakeRequest $request Current request.
+	 * @param CakeResponse $response Current request.
 	 */
 	public function __construct($request, $response) {
 		$request->addParams(Router::parse('/auth_test'));
@@ -125,6 +154,7 @@ class HasPrivilegePropertyController extends Controller {
 	public function camelCase() {
 		echo "camelCase";
 	}
+
 }
 
 /**
@@ -132,7 +162,6 @@ class HasPrivilegePropertyController extends Controller {
  *
  * Also uses the test model that defines necessary methods for
  * TokenLoginLogoutAuthenticate.
- *
  */
 class HasPrivilegePropertyLoginLogoutController extends HasPrivilegePropertyController {
 
@@ -146,8 +175,6 @@ class HasPrivilegePropertyLoginLogoutController extends HasPrivilegePropertyCont
 
 /**
  * StatelessAuthUser class
- *
- * @package       Cake.Test.Case.Controller.Component
  */
 class StatelessAuthUser extends CakeTestModel {
 
@@ -169,8 +196,6 @@ class StatelessAuthUser extends CakeTestModel {
 
 /**
  * StatelessAuthUserWithMethods class
- *
- * @package       Cake.Test.Case.Controller.Component
  */
 class StatelessAuthUserWithMethods extends CakeTestModel {
 
@@ -191,6 +216,8 @@ class StatelessAuthUserWithMethods extends CakeTestModel {
 	/**
 	 * login method
 	 *
+	 * @param string $user Username.
+	 * @param string $pass Password.
 	 * @return void
 	 */
 	public function login($user, $pass) {
@@ -200,6 +227,7 @@ class StatelessAuthUserWithMethods extends CakeTestModel {
 	/**
 	 * logout method
 	 *
+	 * @param array $user User record.
 	 * @return void
 	 */
 	public function logout($user) {
@@ -209,6 +237,7 @@ class StatelessAuthUserWithMethods extends CakeTestModel {
 	/**
 	 * updateLastLogin method
 	 *
+	 * @param string $userId User.id.
 	 * @return void
 	 */
 	public function updateLastLogin($userId) {
@@ -218,11 +247,13 @@ class StatelessAuthUserWithMethods extends CakeTestModel {
 	/**
 	 * findForToken method
 	 *
+	 * @param string $token HTTP Authorization token.
 	 * @return void
 	 */
 	public function findForToken($token) {
 		return 'findForToken';
 	}
+
 }
 
 /**
@@ -239,6 +270,12 @@ class HasNoAuthenticateMethodAuthenticate {
  * Dummy model to test that objects are returned from getModel() correctly.
  */
 class TestCanary extends AppModel {
+
+	/**
+	 * property property
+	 *
+	 * @var string
+	 */
 	public $property = 'fizzbuzz';
 }
 
@@ -246,6 +283,18 @@ class TestCanary extends AppModel {
  * Expose protected properties in TokenLoginLogoutAuthenticate for testing.
  */
 class TestTokenLoginLogoutAuthenticate extends TokenLoginLogoutAuthenticate {
+
+	/**
+	 * _Collection property
+	 *
+	 * @var mixed
+	 */
 	public $_Collection = null;
+
+	/**
+	 * UserModel property
+	 *
+	 * @var Model
+	 */
 	public $UserModel = null;
 }

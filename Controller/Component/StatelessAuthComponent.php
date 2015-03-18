@@ -203,16 +203,16 @@ class StatelessAuthComponent extends Component {
 			return true;
 		}
 
-		if ($this->_isAllowed($controller)) {
+		if ($this->isAllowed($controller)) {
 			return true;
 		}
 
-		if (!$this->_getUser()) {
+		if (!$this->getUser()) {
 			return false;
 		}
 
 		if (
-			$this->_isLoginAction($controller) ||
+			$this->isLoginAction($controller) ||
 			$this->isAuthorized($this->user())
 		) {
 			return true;
@@ -441,7 +441,7 @@ class StatelessAuthComponent extends Component {
 	 * @param Controller $controller A reference to the instantiating controller object
 	 * @return bool True if action is accessible without authentication else false
 	 */
-	protected function _isAllowed(Controller $controller) {
+	protected function isAllowed(Controller $controller) {
 		$action = strtolower($controller->request->params['action']);
 		if (in_array($action, array_map('strtolower', $this->allowedActions))) {
 			return true;
@@ -475,7 +475,7 @@ class StatelessAuthComponent extends Component {
 	 *
 	 * @return bool True if a user can be found, false if one cannot.
 	 */
-	protected function _getUser() {
+	protected function getUser() {
 		$user = $this->user();
 		if ($user) {
 			return true;
@@ -496,7 +496,7 @@ class StatelessAuthComponent extends Component {
 	 * @param Controller $controller A reference to the controller object.
 	 * @return bool True if current action is login action else false.
 	 */
-	protected function _isLoginAction(Controller $controller) {
+	protected function isLoginAction(Controller $controller) {
 		$url = '';
 		if (isset($controller->request->url)) {
 			$url = $controller->request->url;
