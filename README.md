@@ -3,6 +3,7 @@
 <!-- @TODO: Enable these once the project is public, published on Packagist, and auto-tested by Travis.
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Build Status](https://travis-ci.org/loadsys/CakePHP-Stateless-Auth.svg?branch=master&style=flat-square)](https://travis-ci.org/loadsys/CakePHP-Stateless-Auth)
+[![Coverage Status](https://coveralls.io/repos/loadsys/CakePHP-Stateless-Auth/badge.svg)](https://coveralls.io/r/loadsys/CakePHP-Stateless-Auth)
 [![Total Downloads](https://img.shields.io/packagist/dt/loadsys/cakephp-statelessauth.svg?style=flat-square)](https://packagist.org/packages/loadsys/cakephp-statelessauth)
 -->
 
