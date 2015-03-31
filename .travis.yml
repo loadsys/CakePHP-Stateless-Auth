@@ -7,7 +7,7 @@ php:
 
 env:
   global:
-    - PLUGIN_NAME=SocialLinks
+    - PLUGIN_NAME=StatelessAuth
     - REQUIRE=""
     - PHPCS_ARGS="-p --extensions=php --standard=vendor/loadsys/loadsys_codesniffer/Loadsys --ignore=vendor/ ."
 
