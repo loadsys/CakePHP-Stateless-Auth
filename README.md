@@ -25,7 +25,7 @@ The provided component is intended to replace Cake's stock `AuthCompnent`. This 
 * Run this shell command
 
 ````bash
-$ composer require loadsys/cakephp_sociallinks:dev-master
+$ composer require loadsys/cakephp-statelessauth:dev-master
 ````
 
 ### Git
