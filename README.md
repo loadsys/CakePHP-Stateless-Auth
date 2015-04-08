@@ -8,7 +8,7 @@
 
 A replacement CakePHP Authentication/Authorization Component that is fully and strictly stateless. Designed to be used with Cake apps that are only accessed RESTfully.
 
-The provided component is intended to replace Cake's stock `AuthCompnent` (which has trouble not creating Sessions even when you explicitly tell it not to.) This replacement `StatelessAuthComponent` is a stripped down and simplified version that by default looks for an `Authorization` header in the HTTP request and populates `Auth->User()` using the `Bearer [token]` value from that header. It supports plug-able Authenticate and Authorize objects, and the package includes a few that may be of use.
+The provided component is intended to replace Cake's stock `AuthCompnent`. This replacement `StatelessAuthComponent` is a stripped down and simplified version that by default looks for an `Authorization` header in the HTTP request and populates `Auth->User()` using the `Bearer [token]` value from that header. (This is instead of the stock AuthComponent's default operation of looking up data from an active `$_SESSION` on repeat connections using the cookie provided by the browser.) It supports plug-able Authenticate and Authorize objects, and the package includes a few that may be of use.
 
 :warning: This is still alpha-quality software and probably not suitable for public use yet.
 
@@ -55,7 +55,7 @@ The [CakePHP book has more information on doing REST APIs](http://book.cakephp.o
 
 ## Sample Usage
 
-In your project's `AppController`, change your `$components` array to use the plugin's Component, but alias it to allow access by the common name:
+In your project's `AppController`, change your `$components` array to use this plugin's StatelessAuthComponent, but alias it to allow access by the common name:
 
 
 ```php
@@ -91,6 +91,8 @@ Authorization: Bearer 0193d044dd2034bfdeb1ffa33c5fff9b
 :warning: Just like normal Auth, the token will be sent in the clear and could be intercepted and re-used, so be sure to secure your connections using SSL.
 
 `TokenAuthenticate` will attempt to look up a User record using the provided token. You can define the name of your User model to query and the name of the token field to check in the component configuration as shown above.
+
+The StatelessAuthComponent uses this authenticate object by default.
 
 
 You will still access the Component as usual In your controllers:
