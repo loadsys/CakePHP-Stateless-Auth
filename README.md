@@ -136,9 +136,17 @@ Please use [GitHub Isuses](https://github.com/loadsys/CakePHP-Stateless-Auth/iss
 
 When developing this plugin, please fork and issue a PR for any new development.
 
+
+#### Testing
+
 The Complete Test Suite for the Plugin can be run via this command:
 
 `./lib/Cake/Console/cake test StatelessAuth AllStatelessAuth`
+
+#### Code Sniffs
+
+`composer install`
+`vendor/bin/phpcs -p --extensions=php --standard=vendor/loadsys/loadsys_codesniffer/Loadsys --ignore=vendor/ .`
 
 ## License
 

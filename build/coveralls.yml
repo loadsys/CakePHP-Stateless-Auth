@@ -1,0 +1,5 @@
+# for php-coveralls
+# Will be copied into a cake core folder for use.
+src_dir: Plugin/StatelessAuth
+coverage_clover: tmp/clover.xml
+json_path: tmp/coveralls-upload.json

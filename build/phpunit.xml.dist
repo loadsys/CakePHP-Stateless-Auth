@@ -1,0 +1,12 @@
+<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<phpunit>
+<filter>
+    <whitelist>
+        <directory suffix=\".php\">Plugin/StatelessAuth</directory>
+        <exclude>
+            <directory suffix=\".php\">Plugin/StatelessAuth/Test</directory>
+            <directory suffix=\".php\">Plugin/StatelessAuth/build</directory>
+        </exclude>
+    </whitelist>
+</filter>
+</phpunit>

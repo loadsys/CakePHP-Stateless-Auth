@@ -25,6 +25,12 @@
         "php": ">=5.4.0",
         "composer/installers": "~1.0"
     },
+    "require-dev": {
+        "phpunit/phpunit": "~3.7.33",
+        "phpdocumentor/phpdocumentor": "~2.0",
+        "loadsys/loadsys_codesniffer": "~1.0",
+        "satooshi/php-coveralls": "dev-master"
+    },
     "extra": {
         "installer-name": "StatelessAuth"
     }
