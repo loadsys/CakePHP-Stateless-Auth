@@ -6,7 +6,7 @@ App::uses('StatelessAuthComponent', 'StatelessAuth.Controller/Component');
 App::uses('TokenLoginLogoutAuthenticate', 'StatelessAuth.Controller/Component/Auth');
 App::uses('AppModel', 'Model');
 App::uses('Controller', 'Controller');
-App::import('Lib/Error', 'StatelessAuth.StatelessAuthExceptions');
+App::uses('StatelessAuthException', 'StatelessAuth.Lib/Error');
 
 /**
  * Exposes protected properties via setters.
