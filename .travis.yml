@@ -1,8 +1,8 @@
 language: php
 
 php:
-# - 5.4
-# - 5.5
+  - 5.4
+  - 5.5
   - 5.6
 
 env:
@@ -11,32 +11,36 @@ env:
     - REQUIRE=""
     - PHPCS_ARGS="-p --extensions=php --standard=vendor/loadsys/loadsys_codesniffer/Loadsys --ignore=vendor/ ."
     - secure: "VlP5RhCRa9RDdiHIkoHxuIn2e+DPhrV/3tExQGaAWMfHmVpjOmX3CSGJSRXw0D4SkKL+8Kn5NKz+2eHtm0XQf0YYw4kQ1m1QdT7wYntbLxmNnaSiekkE6CJaL9MuVKljxEAs+5Ug1N7fA8W0Y1tvYokdgotInEvnRqrBjGqpRvU="
-
-#  matrix:
-#    - DB=mysql CAKE_VERSION=2.3
-#    - DB=mysql CAKE_VERSION=2.4
-#    - DB=mysql CAKE_VERSION=2.5
+  matrix:
+    - DB=mysql CAKE_VERSION=2.3
+    - DB=mysql CAKE_VERSION=2.4
+    - DB=mysql CAKE_VERSION=2.5
     - DB=mysql CAKE_VERSION=2.6
 
-# matrix:
-#   fast_finish: true
-#   include:
-#     - php: 5.6
-#       env:
-#       - DB=mysql
-#       - CAKE_VERSION=2.6
-#       - COVERALLS=1
-#     - php: 5.6
-#       env:
-#       - DB=mysql
-#       - CAKE_VERSION=2.6
-#       - PHPCS=1
-#   allow_failures:
-#     - php: 5.6
-#       env:
-#       - DB=mysql
-#       - CAKE_VERSION=2.6
-#       - PHPCS=1
+matrix:
+  fast_finish: true
+  include:
+    - php: 5.6
+      env:
+        - DB=mysql
+        - CAKE_VERSION=2.6
+        - COVERALLS=1
+    - php: 5.6
+      env:
+        - DB=mysql
+        - CAKE_VERSION=2.6
+        - PHPCS=1
+  allow_failures:
+    - php: 5.6
+      env:
+        - DB=mysql
+        - CAKE_VERSION=2.6
+        - PHPCS=1
+
+cache:
+  directories:
+    - vendor
+    - $HOME/.composer/cache
 
 install:
   - composer config -g github-oauth.github.com $GITHUB_TOKEN
