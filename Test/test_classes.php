@@ -51,24 +51,10 @@ class TestStatelessAuthComponent extends StatelessAuthComponent {
 }
 
 /**
- * A test controller that does not define the mandatory ::$privilege property.
- *
- */
-class MissingHasPrivilegePropertyController extends Controller {
-}
-
-/**
  * A test controller that defines the mandatory ::$privilege property.
  *
  */
-class HasPrivilegePropertyController extends Controller {
-
-	/**
-	 * privilege property
-	 *
-	 * @var string
-	 */
-	public $privilege = 'users';
+class StatelessAuthController extends Controller {
 
 	/**
 	 * components property
@@ -158,22 +144,6 @@ class HasPrivilegePropertyController extends Controller {
 }
 
 /**
- * A test controller that defines the mandatory ::$privilege property.
- *
- * Also uses the test model that defines necessary methods for
- * TokenLoginLogoutAuthenticate.
- */
-class HasPrivilegePropertyLoginLogoutController extends HasPrivilegePropertyController {
-
-	/**
-	 * uses property
-	 *
-	 * @var array
-	 */
-	public $uses = array('StatelessAuthUserWithMethods');
-}
-
-/**
  * StatelessAuthUser class
  */
 class StatelessAuthUser extends CakeTestModel {
@@ -191,7 +161,6 @@ class StatelessAuthUser extends CakeTestModel {
 	 * @var string
 	 */
 	public $name = 'User';
-
 }
 
 /**
