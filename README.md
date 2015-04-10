@@ -1,9 +1,9 @@
-# CakePHP-Stateless-Auth
+# CakePHP Stateless AuthComponent
 
-[![Latest Version](https://img.shields.io/github/release/loadsys/CakePHP-StatelessAuth.svg?style=flat-square)](https://github.com/loadsys/CakePHP-StatelessAuth/releases)
+[![Latest Version](https://img.shields.io/github/release/loadsys/CakePHP-Stateless-Auth.svg?style=flat-square)](https://github.com/loadsys/CakePHP-Stateless-Auth/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
-[![Build Status](https://travis-ci.org/loadsys/CakePHP-StatelessAuth.svg?branch=master&style=flat-square)](https://travis-ci.org/loadsys/CakePHP-StatelessAuth)
-[![Total Downloads](https://img.shields.io/packagist/dt/loadsys/cakephp-statelessauth.svg?style=flat-square)](https://packagist.org/packages/loadsys/cakephp-statelessauth)
+[![Build Status](https://travis-ci.org/loadsys/CakePHP-Stateless-Auth.svg?branch=master&style=flat-square)](https://travis-ci.org/loadsys/CakePHP-Stateless-Auth)
+[![Total Downloads](https://img.shields.io/packagist/dt/loadsys/cakephp-stateless-auth.svg?style=flat-square)](https://packagist.org/packages/loadsys/cakephp-stateless-auth)
 
 A replacement CakePHP Authentication/Authorization Component that is fully and strictly stateless. Designed to be used with Cake apps that are only accessed RESTfully.
 
@@ -25,14 +25,8 @@ The provided component is intended to replace Cake's stock `AuthCompnent`. This 
 * Run this shell command
 
 ````bash
-$ composer require loadsys/cakephp-statelessauth:dev-master
+$ composer require loadsys/cakephp-stateless-auth:dev-master
 ````
-
-### Git
-
-```bash
-git clone https://github.com/loadsys/CakePHP-Stateless-Auth.git Plugin/Stateless-Auth
-```
 
 ### Setup
 
@@ -40,10 +34,10 @@ Load the plugin and be sure that bootstrap is set to true:
 
 ```php
 // Config/boostrap.php
-CakePlugin::load('Stateless-Auth', array('bootstrap' => true));
+CakePlugin::load('StatelessAuth', array('bootstrap' => true));
 // or
 CakePlugin::loadAll(array(
-	'Stateless-Auth' => array('bootstrap' => true),
+	'StatelessAuth' => array('bootstrap' => true),
 ));
 ```
 
