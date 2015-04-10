@@ -13,6 +13,7 @@ env:
     - PHPCS_ARGS="-p --extensions=php --standard=vendor/loadsys/loadsys_codesniffer/Loadsys --ignore=vendor/ ."
 
   matrix:
+    - DB=mysql CAKE_VERSION=2.5
     - DB=mysql CAKE_VERSION=2.6
 
 matrix:
