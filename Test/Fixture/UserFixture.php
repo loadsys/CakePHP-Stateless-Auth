@@ -5,11 +5,11 @@
  */
 class UserFixture extends CakeTestFixture {
 
-/**
- * Fields
- *
- * @var array
- */
+	/**
+	 * Fields
+	 *
+	 * @var array
+	 */
 	public $fields = array(
 		'id' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 36, 'key' => 'primary', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'token' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
@@ -25,11 +25,11 @@ class UserFixture extends CakeTestFixture {
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);
 
-/**
- * Records
- *
- * @var array
- */
+	/**
+	 * Records
+	 *
+	 * @var array
+	 */
 	public $records = array(
 		array(
 			'id' => '7d5b22bd-fc92-11e3-b153-080027dec79b',
@@ -63,6 +63,9 @@ class UserFixture extends CakeTestFixture {
 		),
 	);
 
+	/**
+	 * Apply any necessary runtime settings to the data.
+	 */
 	public function __construct() {
 		parent::__construct();
 		$this->records[1]['last_login_at'] = (new DateTime())->format('Y-m-d H:i:s');

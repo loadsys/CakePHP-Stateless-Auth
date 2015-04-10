@@ -148,7 +148,7 @@ class TokenAuthenticate extends BaseAuthenticate {
 	 * query, what field to check against, and what additional conditions
 	 * to impose upon the query.
 	 *
-	 * @param string $tokenThe token obtained from the HTTP request headers to use to look up the User record.
+	 * @param string $token The token obtained from the HTTP request headers to use to look up the User record.
 	 * @return array|false An array containing the [User] record on success, false on failure.
 	 */
 	protected function findUserForToken($token) {
@@ -170,7 +170,7 @@ class TokenAuthenticate extends BaseAuthenticate {
 			$options['fields'] = $this->settings['userFields'];
 		}
 
- 		$user = $this->getModel()->find('first', $options);
+		$user = $this->getModel()->find('first', $options);
 		return $user;
 	}
 }

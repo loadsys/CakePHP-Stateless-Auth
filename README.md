@@ -1,10 +1,9 @@
 # CakePHP-Stateless-Auth
 
-<!-- @TODO: Enable these once the project is public, published on Packagist, and auto-tested by Travis.
+[![Latest Version](https://img.shields.io/github/release/loadsys/CakePHP-StatelessAuth.svg?style=flat-square)](https://github.com/loadsys/CakePHP-StatelessAuth/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
-[![Build Status](https://travis-ci.org/loadsys/CakePHP-Stateless-Auth.svg?branch=master&style=flat-square)](https://travis-ci.org/loadsys/CakePHP-Stateless-Auth)
+[![Build Status](https://travis-ci.org/loadsys/CakePHP-StatelessAuth.svg?branch=master&style=flat-square)](https://travis-ci.org/loadsys/CakePHP-StatelessAuth)
 [![Total Downloads](https://img.shields.io/packagist/dt/loadsys/cakephp-statelessauth.svg?style=flat-square)](https://packagist.org/packages/loadsys/cakephp-statelessauth)
--->
 
 A replacement CakePHP Authentication/Authorization Component that is fully and strictly stateless. Designed to be used with Cake apps that are only accessed RESTfully.
 
@@ -13,12 +12,10 @@ The provided component is intended to replace Cake's stock `AuthCompnent`. This 
 :warning: This is still alpha-quality software and probably not suitable for public use yet.
 
 
-
 ## Requirements
 
 * PHP >= 5.4.0
 * CakePHP >= 2.6
-
 
 
 ## Installation
@@ -27,9 +24,9 @@ The provided component is intended to replace Cake's stock `AuthCompnent`. This 
 
 * Run this shell command
 
-```bash
-php composer.phar require loadsys/cakephp-statelessauth "dev-master"
-```
+````bash
+$ composer require loadsys/cakephp-statelessauth:dev-master
+````
 
 ### Git
 

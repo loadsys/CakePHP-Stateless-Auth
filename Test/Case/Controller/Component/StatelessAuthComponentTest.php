@@ -25,7 +25,6 @@ class StatelessAuthComponentTest extends CakeTestCase {
 		'plugin.stateless_auth.user',
 	);
 
-
 	/**
 	 * setUp method
 	 *
@@ -89,7 +88,6 @@ class StatelessAuthComponentTest extends CakeTestCase {
 		$this->Component->authorizeObject = $authorizeMock;
 	}
 
-
 	/**
 	 * Test initialize() failure when controller does not define mandatory
 	 * ::$privilege property.
@@ -126,7 +124,7 @@ class StatelessAuthComponentTest extends CakeTestCase {
 	}
 
 	/**
-	 * Test that startup() calls _getUser() at the appropriate time.
+	 * Test that startup() calls getUser() at the appropriate time.
 	 *
 	 * @return void
 	 */

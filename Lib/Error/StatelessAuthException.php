@@ -132,6 +132,7 @@ class StatelessAuthException extends CakeException {
 	public function getId() {
 		return $this->id;
 	}
+
 }
 
 /**
@@ -157,6 +158,7 @@ class StatelessAuthUnauthorizedException extends StatelessAuthException {
 	) {
 		parent::__construct($title, $detail, $code, $href, $id);
 	}
+
 }
 
 /**
@@ -183,6 +185,7 @@ class StatelessAuthForbiddenByPermissionsException extends StatelessAuthExceptio
 	) {
 		parent::__construct($title, $detail, $code, $href, $id);
 	}
+
 }
 
 /**
@@ -208,5 +211,6 @@ class StatelessAuthMissingMethodException extends StatelessAuthException {
 	) {
 		parent::__construct($title, $detail, $code, $href, $id);
 	}
+
 }
 

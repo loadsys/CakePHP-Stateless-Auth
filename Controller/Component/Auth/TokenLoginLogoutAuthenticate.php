@@ -131,7 +131,7 @@ class TokenLoginLogoutAuthenticate extends TokenAuthenticate {
 	 *
 	 * @param CakeRequest $request Request object.
 	 * @return mixed Either false or an array of user information
-	 * @throws UnauthorizedJsonApiException If there is no HTTP_AUTHORIZATION header present, or an unexpired User session could not be retrieve using it.
+	 * @throws StatelessAuthUnauthorizedException If there is no HTTP Authorization header present, or an unexpired User session could not be retrieve using it.
 	 */
 	public function getUser(CakeRequest $request) {
 		$token = $this->getToken($request);
@@ -193,10 +193,9 @@ class TokenLoginLogoutAuthenticate extends TokenAuthenticate {
 	 * Confirm that a method is actually defined (and not shadowed by
 	 * `__call()` for the given object.)
 	 *
-	 * @access	protected
-	 * @param	string	$method	The name of the method to check.
-	 * @param	object	$obj	The instantiated object to check.
-	 * @return	boolean			True if the named method exists (not via __call()), false otherwise.
+	 * @param string $method The name of the method to check.
+	 * @param object $obj The instantiated object to check.
+	 * @return bool True if the named method exists (not via __call()), false otherwise.
 	 */
 	protected function isActualClassMethod($method, $obj) {
 		return (

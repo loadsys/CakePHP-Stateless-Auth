@@ -1,6 +1,8 @@
 <?php
 // test classes for mocking
-require_once dirname(dirname(dirname(dirname(__FILE__)))) . DS . "test_classes.php";
+//require_once dirname(dirname(dirname(dirname(__FILE__)))) . DS . "test_classes.php";
+
+App::uses('StatelessAuthException', 'StatelessAuth.Lib/Error');
 
 /**
  * Exceptions tests
