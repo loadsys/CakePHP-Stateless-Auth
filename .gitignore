@@ -8,3 +8,4 @@ app/[Cc]onfig/database.php
 !empty
 /vendor/*
 /travis
+composer.lock
