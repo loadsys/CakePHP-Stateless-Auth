@@ -38,6 +38,7 @@ env:
 
 before_script:
   - git clone -b master https://github.com/FriendsOfCake/travis.git --depth 1 ../travis
+  - sed -i'' 's|#!/bin/bash|#!/bin/bash -x|' ../travis/before_script.sh
   - ../travis/before_script.sh
   - composer require --dev --no-interaction --prefer-source loadsys/loadsys_codesniffer=*
 
