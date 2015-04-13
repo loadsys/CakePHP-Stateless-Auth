@@ -9,7 +9,7 @@ A replacement CakePHP Authentication/Authorization Component that is fully and s
 
 The provided component is intended to replace Cake's stock `AuthCompnent`. This replacement `StatelessAuthComponent` is a stripped down and simplified version that by default looks for an `Authorization` header in the HTTP request and populates `Auth->User()` using the `Bearer [token]` value from that header. (This is instead of the stock AuthComponent's default operation of looking up data from an active `$_SESSION` on repeat connections using the cookie provided by the browser.) It supports plug-able Authenticate and Authorize objects, and the package includes a few that may be of use.
 
-:warning: This is still alpha-quality software and probably not suitable for public use yet.
+:warning: This is still unstable software and probably not suitable for public use yet.
 
 
 ## Requirements
@@ -110,10 +110,31 @@ You will still access the Component as usual In your controllers:
 	}
 ```
 
+You must define an `::isAuthorized($user)` method either in each controller or your `AppController` that returns true or false based on whether the current `Auth->user()` should be allowed to access the current controller action.
+
+If you wish for all authenticated Users to have access to all methods, you can place the following in your project's AppController:
+
+```php
+	public function isAuthorized($user) {
+		return true;
+	}
+```
+
+Alternatively, you can supply your own authorization object to perform the appropriate checks yourself. See Cake's cookbook section on [Authorization](http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#authorization) for details.
+
 
 ### Errors and Exceptions
 
 Some classes in this plugin throw custom exceptions instead of the typical `return false;`. This is meant to aid in communicating failures and make rendering errors in a specific format (such as json) easier to handle.
+
+
+### Swapping authentication and authorization objects
+
+The project comes with additional Auth objects that can be used to extend the functionality surrounding HTTP header authentication. The `TokenLoginLogoutAuthenticate` object, for example, allows you to hook callback behavior into the `Auth->login()` and `Auth->logout()` processes to perform additional Model operations.
+
+See `Controller/Component/Auth/TokenLoginLogoutAuthenticate.php`, specifically `::requireUserModelMethods()` for details and expected method signatures.
+
+@TODO: Write up proper documentation on the callback methods needed.
 
 
 

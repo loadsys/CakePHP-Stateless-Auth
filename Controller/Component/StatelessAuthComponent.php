@@ -166,11 +166,6 @@ class StatelessAuthComponent extends Component {
 		parent::initialize($controller);
 		$this->controller = $controller;
 
-		$this->privilege = $controller->privilege;
-		if (empty($this->privilege)) {
-			throw new NotImplementedException(sprintf("%sController does not define the mandatory `::\$privilege` property used for authorization. See AppController::\$privilege for further explanation.", Inflector::classify($controller->request->params['controller'])));
-		}
-
 		$this->request = $controller->request;
 		$this->response = $controller->response;
 		$this->methods = $controller->methods;

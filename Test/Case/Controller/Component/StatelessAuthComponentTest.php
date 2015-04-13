@@ -41,7 +41,7 @@ class StatelessAuthComponentTest extends CakeTestCase {
 			->with('Authorization')
 			->will($this->returnValue('Bearer ' . $token));
 
-		$this->Controller = new HasPrivilegePropertyController($request, $this->getMock('CakeResponse'));
+		$this->Controller = new StatelessAuthController($request, $this->getMock('CakeResponse'));
 		$this->Controller->request = $request;
 
 		$collection = new ComponentCollection();
@@ -81,26 +81,11 @@ class StatelessAuthComponentTest extends CakeTestCase {
 			->will($this->returnValue($authenticateResult));
 		$this->Component->authenticateObject = $authenticateMock;
 
-		$authorizeMock = $this->getMock('PrivilegeAuthorize', array('authorize'), array(), '', false);
+		$authorizeMock = $this->getMock('IsAuthorizedAuthorize', array('authorize'), array(), '', false);
 		$authorizeMock->expects($this->any())
 			->method('authorize')
 			->will($this->returnValue($authorizeResult));
 		$this->Component->authorizeObject = $authorizeMock;
-	}
-
-	/**
-	 * Test initialize() failure when controller does not define mandatory
-	 * ::$privilege property.
-	 *
-	 * @return void
-	 */
-	public function testInitializePassControllerWithoutPrivilegeProperty() {
-		$controller = new MissingHasPrivilegePropertyController(
-			new CakeRequest(null, false),
-			new CakeResponse()
-		);
-		$this->expectException('NotImplementedException');
-		$this->Component->initialize($controller);
 	}
 
 	/**
@@ -109,7 +94,7 @@ class StatelessAuthComponentTest extends CakeTestCase {
 	 * @return void
 	 */
 	public function testInitializeSuccessful() {
-		$controller = $this->getMock('HasPrivilegePropertyController', array(), array(), '', false);
+		$controller = $this->getMock('StatelessAuthController', array(), array(), '', false);
 		$controller->request = new StdClass();
 		$controller->request->params = array('action' => 'canary', 'controller' => 'foo');
 		$controller->response = 'toucan';
