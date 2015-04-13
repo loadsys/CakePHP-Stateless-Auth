@@ -37,12 +37,15 @@ env:
 #       - CAKE_VERSION=2.6
 #       - PHPCS=1
 
-before_script:
+install:
+  - composer config -g github-oauth.github.com $GITHUB_TOKEN
   - git clone -b master https://github.com/FriendsOfCake/travis.git --depth 1 ../travis
-  - sed -i'' 's|#!/bin/bash|#!/bin/bash -x|' ../travis/before_script.sh
+  #- sed -i'' 's|#!/bin/bash|#!/bin/bash -x|' ../travis/before_script.sh
   - 'sed -i'''' ''s|curl |curl -H "Authorization: token \$GITHUB_TOKEN" |g'' ../travis/before_script.sh'
+
+before_script:
   - ../travis/before_script.sh
-  - composer require --dev --no-interaction --prefer-source loadsys/loadsys_codesniffer=*
+  - composer require --no-interaction loadsys/loadsys_codesniffer:*
 
 script:
   - ../travis/script.sh
