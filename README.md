@@ -134,7 +134,7 @@ The project comes with additional Auth objects that can be used to extend the fu
 
 See `Controller/Component/Auth/TokenLoginLogoutAuthenticate.php`, specifically `::requireUserModelMethods()` for details and expected method signatures.
 
-@OTOD: Write up proper documentation on the callback methods needed.
+@TODO: Write up proper documentation on the callback methods needed.
 
 
 
