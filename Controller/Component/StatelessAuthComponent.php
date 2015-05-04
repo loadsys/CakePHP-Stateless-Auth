@@ -57,7 +57,7 @@ class StatelessAuthComponent extends Component {
 	public $allowedActions = array();
 
 	/**
-	 * An array of settings for the authentication object to use for authenticating users. @TODO: Is this even getting used beyond the `className`??
+	 * An array of settings for the authentication object to use for authenticating users.
 	 *
 	 * {{{
 	 *	$this->Auth->authenticate = array(

@@ -19,4 +19,5 @@ class StatelessAuthAppControllerTest extends ControllerTestCase {
 		$controller = $this->generate('StatelessAuth.StatelessAuthApp');
 		$result = $controller->beforeFilter();
 	}
+
 }

@@ -41,4 +41,5 @@ class StatelessAuthAppModelTest extends CakeTestCase {
 	public function testNothing() {
 		$result = $this->Model->beforeValidate();
 	}
+
 }
