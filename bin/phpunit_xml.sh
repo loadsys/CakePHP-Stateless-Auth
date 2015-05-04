@@ -5,6 +5,12 @@
 # phpunit.xml file. This script overwrites it.
 
 
+# Do nothing on code sniff builds.
+if [ "$PHPCS" == 1 ]; then
+	exit 0
+fi
+
+# Write a phpunit.xml file to use.
 echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <phpunit>
 <filter>
