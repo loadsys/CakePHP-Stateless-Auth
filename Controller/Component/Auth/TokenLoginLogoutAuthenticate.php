@@ -59,10 +59,7 @@ class TokenLoginLogoutAuthenticate extends TokenAuthenticate {
 	public function __construct(ComponentCollection $collection, $settings) {
 		parent::__construct($collection, $settings);
 
-		$userModel = $this->settings['userModel'];
-		list(, $model) = pluginSplit($userModel);
 		$this->UserModel = $this->getModel();
-
 		$this->requireUserModelMethods();
 	}
 
