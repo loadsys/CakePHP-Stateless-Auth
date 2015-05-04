@@ -49,6 +49,7 @@ install:
 
 before_script:
   - ../travis/before_script.sh
+  - ./bin/phpunit_xml.sh
   - composer require --no-interaction loadsys/loadsys_codesniffer:*
 
 script:
