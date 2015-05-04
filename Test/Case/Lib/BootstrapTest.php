@@ -1,7 +1,7 @@
 <?php
 
 /**
- * StatelessAuthAppModel Test Case
+ * StatelessAuthBootstrap Test Case
  *
  */
 class StatelessAuthBootstrapTest extends CakeTestCase {

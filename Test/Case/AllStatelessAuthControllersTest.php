@@ -1,6 +1,6 @@
 <?php
 /*
- * Custom test suite to execute all controller tests.
+ * Custom test suite to execute all StatelessAuth Plugin controller tests.
  */
 class AllStatelessAuthControllersTest extends PHPUnit_Framework_TestSuite {
 	public static function suite() {
