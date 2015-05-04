@@ -57,7 +57,7 @@ class StatelessAuthComponent extends Component {
 	public $allowedActions = array();
 
 	/**
-	 * An array of settings for the authentication object to use for authenticating users. @TODO: Is this even getting used beyond the `className`??
+	 * An array of settings for the authentication object to use for authenticating users.
 	 *
 	 * {{{
 	 *	$this->Auth->authenticate = array(
@@ -226,15 +226,13 @@ class StatelessAuthComponent extends Component {
 	 * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#accessing-the-logged-in-user
 	 */
 	public function user($key = null) {
-		if (!empty($this->user)) {
-			$user = $this->user;
-		} else {
+		if (empty($this->user)) {
 			return null;
 		}
 		if ($key === null) {
-			return $user;
+			return $this->user;
 		}
-		return Hash::get($user, $key);
+		return Hash::get($this->user, $key);
 	}
 
 	/**
