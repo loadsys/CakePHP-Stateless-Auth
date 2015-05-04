@@ -8,6 +8,8 @@ class AllStatelessAuthTest extends PHPUnit_Framework_TestSuite {
 		'AllStatelessAuthLibsTest.php',
 		'AllStatelessAuthBehaviorsTest.php',
 		'AllStatelessAuthComponentsTest.php',
+		'AllStatelessAuthModelsTest.php',
+		'AllStatelessAuthControllersTest.php',
 	);
 
 	public static function suite() {
