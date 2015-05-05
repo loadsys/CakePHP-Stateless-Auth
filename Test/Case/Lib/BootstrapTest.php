@@ -16,6 +16,7 @@ class StatelessAuthBootstrapTest extends CakeTestCase {
 	public function testBootstrap() {
 		require_once APP . 'Plugin' . DS . 'SerializersErrors' . DS . 'Config' . DS . 'bootstrap.php';
 		$statelessAuthException = new StatelessAuthException("New StatelessAuthException");
+		$baseSerializerException = new BaseSerializerException("New BaseSerializerException");
 	}
 
 }
