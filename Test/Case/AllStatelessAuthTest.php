@@ -12,6 +12,11 @@ class AllStatelessAuthTest extends PHPUnit_Framework_TestSuite {
 		'AllStatelessAuthControllersTest.php',
 	);
 
+	/**
+	 * load the suites
+	 *
+	 * @return CakeTestSuite
+	 */
 	public static function suite() {
 		$path = dirname(__FILE__) . '/';
 		$suite = new CakeTestSuite('All StatelessAuth Tests');
