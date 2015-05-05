@@ -2,7 +2,6 @@
 /**
  * StatelessAuthAppController test file
  */
-
 App::uses('StatelessAuthAppController', 'StatelessAuth.Controller');
 
 /**
