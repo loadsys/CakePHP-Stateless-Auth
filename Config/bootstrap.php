@@ -4,4 +4,4 @@
 CakePlugin::load('SerializersErrors', array('bootstrap' => true));
 
 // Load CakePHP Stateless Auth Exceptions
-App::import('Lib/Error', 'StatelessAuth.StatelessAuthExceptions');
+App::import('Lib/Error', 'StatelessAuth.StatelessAuthException');

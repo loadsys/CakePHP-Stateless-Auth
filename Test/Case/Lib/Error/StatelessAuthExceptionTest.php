@@ -5,12 +5,12 @@
  *
  * @package StatelessAuth.Test.Case.Lib.Error
  */
-App::import('Lib/Error', 'StatelessAuth.StatelessAuthExceptions');
+App::import('Lib/Error', 'StatelessAuth.StatelessAuthException');
 
 /**
  * StandardJsonApiExceptionsTest
  */
-class StatelessAuthExceptionsTest extends CakeTestCase {
+class StatelessAuthExceptionTest extends CakeTestCase {
 
 	/**
 	 * setUp
