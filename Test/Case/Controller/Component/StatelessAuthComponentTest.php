@@ -1,13 +1,14 @@
 <?php
 /**
  * StatelessAuthComponent file
+ *
+ * @package StatelessAuth.Test.Case.Controller.Component
  */
-
 App::uses('Controller', 'Controller');
 App::uses('StatelessAuthComponent', 'StatelessAuth.Controller/Component');
 
 // test classes for mocking
-require_once dirname(dirname(dirname(dirname(__FILE__)))) . DS . "test_classes.php";
+App::import('Test', 'StatelessAuth.test_classes');
 
 /**
  * StatelessAuthComponentTest class

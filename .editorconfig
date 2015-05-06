@@ -1,0 +1,13 @@
+# EditorConfig is awesome: http://EditorConfig.org
+
+# Unix-style newlines, with a final newline and tab spacing
+[*]
+end_of_line = lf
+indent_style = tab
+insert_final_newline = true
+
+# Matches the exact files package.json, composer.json and .travis.yml, and file
+# types .yaml and .yml to be indented via 2 spaces
+[{package.json,.travis.yml,composer.json,*.yaml,*.yml}]
+indent_style = space
+indent_size = 2

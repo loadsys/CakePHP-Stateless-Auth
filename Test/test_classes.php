@@ -6,7 +6,8 @@ App::uses('StatelessAuthComponent', 'StatelessAuth.Controller/Component');
 App::uses('TokenLoginLogoutAuthenticate', 'StatelessAuth.Controller/Component/Auth');
 App::uses('AppModel', 'Model');
 App::uses('Controller', 'Controller');
-App::uses('StatelessAuthException', 'StatelessAuth.Lib/Error');
+// Load CakePHP Stateless Auth Exceptions
+App::import('Lib/Error', 'StatelessAuth.StatelessAuthException');
 
 /**
  * Exposes protected properties via setters.

@@ -1,136 +1,39 @@
 <?php
 /**
- * Custom Exceptions for the CakePHP Stateless Auth plugin.
+ * Custom Exceptions for the CakePHP StatelessAuth Plugin
+ *
+ * @package StatelessAuth.Lib.Error
  */
+App::uses('BaseSerializerException', 'SerializersErrors.Error');
 
 /**
  * StatelessAuthException
  *
  * Generic base exception for the plugin to extend.
  */
-class StatelessAuthException extends CakeException {
-
-	/**
-	 * A short, human-readable summary of the problem. It SHOULD NOT change from
-	 * occurrence to occurrence of the problem, except for purposes of
-	 * localization.
-	 *
-	 * @var null
-	 */
-	public $title = 'Stateless Auth Exception';
-
-	/**
-	 * A human-readable explanation specific to this occurrence of the problem.
-	 *
-	 * @var null
-	 */
-	public $detail = 'Stateless Auth Exception';
-
-	/**
-	 * An application-specific error code, expressed as a string value.
-	 *
-	 * @var null
-	 */
-	public $code = 400;
-
-	/**
-	 * A URI that MAY yield further details about this particular occurrence
-	 * of the problem.
-	 *
-	 * @var null
-	 */
-	public $href = null;
-
-	/**
-	 * A unique identifier for this particular occurrence of the problem.
-	 *
-	 * @var null
-	 */
-	public $id = null;
-
-	/**
-	 * The HTTP status code applicable to this problem, expressed as a string
-	 * value.
-	 *
-	 * @var null
-	 */
-	public $status = null;
-
-	/**
-	 * Associated resources which can be dereferenced from the request document.
-	 *
-	 * @var null
-	 */
-	public $links = null;
-
-	/**
-	 * The relative path to the relevant attribute within the associated
-	 * resource(s). Only appropriate for problems that apply to a single
-	 * resource or type of resource.
-	 *
-	 * @var null
-	 */
-	public $path = null;
+class StatelessAuthException extends BaseSerializerException {
 
 	/**
 	 * Constructs a new instance of the base StatelessAuthException
 	 *
-	 * @param string $title The title of the exception.
-	 * @param string $detail A detailed human readable message.
-	 * @param int $code The http status code of the error.
-	 * @param string $href A URI that MAY yield further details about this particular occurrence of the problem.
+	 * @param string $title The title of the exception, passed to parent CakeException::__construct
+	 * @param string $detail A human-readable explanation specific to this occurrence of the problem.
+	 * @param int $status The http status code of the error, passed to parent CakeException::__construct
 	 * @param string $id A unique identifier for this particular occurrence of the problem.
+	 * @param string $href A URI that MAY yield further details about this particular occurrence of the problem.
+	 * @param array $links An array of JSON Pointers [RFC6901] to the associated resource(s) within the request document [e.g. ["/data"] for a primary data object].
+	 * @param array $paths An array of JSON Pointers to the relevant attribute(s) within the associated resource(s) in the request document. Each path MUST be relative to the resource path(s) expressed in the error object's "links" member [e.g. ["/first-name", "/last-name"] to reference a couple attributes].
 	 */
 	public function __construct(
 		$title = 'Stateless Auth Exception',
 		$detail = 'Stateless Auth Exception',
-		$code = 400,
+		$status = 400,
+		$id = null,
 		$href = null,
-		$id = null
+		$links = null,
+		$paths = null
 	) {
-		// Set the passed in properties to the properties of the Object
-		$this->title = $title;
-		$this->detail = $detail;
-		$this->code = $code;
-		$this->href = $href;
-		$this->id = $id;
-		parent::__construct($this->title, $code);
-	}
-
-	/**
-	 * return the title for this Exception
-	 *
-	 * @return string
-	 */
-	public function getTitle() {
-		return $this->title;
-	}
-
-	/**
-	 * return the detail for this Exception
-	 *
-	 * @return string
-	 */
-	public function getDetail() {
-		return $this->detail;
-	}
-
-	/**
-	 * return the href for this Exception
-	 *
-	 * @return string
-	 */
-	public function getHref() {
-		return $this->href;
-	}
-
-	/**
-	 * return the id for this Exception
-	 *
-	 * @return string
-	 */
-	public function getId() {
-		return $this->id;
+		parent::__construct($title, $detail, $status, $id, $href, $links, $paths);
 	}
 
 }
@@ -143,20 +46,24 @@ class StatelessAuthUnauthorizedException extends StatelessAuthException {
 	/**
 	 * Constructs a new instance of the StatelessAuthUnauthorizedException
 	 *
-	 * @param string $title The title of the exception.
-	 * @param string $detail A detailed human readable message.
-	 * @param int $code The http status code of the error.
-	 * @param string $href A URI that MAY yield further details about this particular occurrence of the problem.
+	 * @param string $title The title of the exception, passed to parent CakeException::__construct
+	 * @param string $detail A human-readable explanation specific to this occurrence of the problem.
+	 * @param int $status The http status code of the error, passed to parent CakeException::__construct
 	 * @param string $id A unique identifier for this particular occurrence of the problem.
+	 * @param string $href A URI that MAY yield further details about this particular occurrence of the problem.
+	 * @param array $links An array of JSON Pointers [RFC6901] to the associated resource(s) within the request document [e.g. ["/data"] for a primary data object].
+	 * @param array $paths An array of JSON Pointers to the relevant attribute(s) within the associated resource(s) in the request document. Each path MUST be relative to the resource path(s) expressed in the error object's "links" member [e.g. ["/first-name", "/last-name"] to reference a couple attributes].
 	 */
 	public function __construct(
 		$title = 'Unauthorized Access',
 		$detail = 'Unauthorized Access',
-		$code = 401,
+		$status = 401,
+		$id = null,
 		$href = null,
-		$id = null
+		$links = null,
+		$paths = null
 	) {
-		parent::__construct($title, $detail, $code, $href, $id);
+		parent::__construct($title, $detail, $status, $id, $href, $links, $paths);
 	}
 
 }
@@ -170,20 +77,24 @@ class StatelessAuthForbiddenByPermissionsException extends StatelessAuthExceptio
 	/**
 	 * Constructs a new instance of the StatelessAuthForbiddenByPermissionsException
 	 *
-	 * @param string $title The title of the exception.
-	 * @param string $detail A detailed human readable message.
-	 * @param int $code The http status code of the error.
-	 * @param string $href A URI that MAY yield further details about this particular occurrence of the problem.
+	 * @param string $title The title of the exception, passed to parent CakeException::__construct
+	 * @param string $detail A human-readable explanation specific to this occurrence of the problem.
+	 * @param int $status The http status code of the error, passed to parent CakeException::__construct
 	 * @param string $id A unique identifier for this particular occurrence of the problem.
+	 * @param string $href A URI that MAY yield further details about this particular occurrence of the problem.
+	 * @param array $links An array of JSON Pointers [RFC6901] to the associated resource(s) within the request document [e.g. ["/data"] for a primary data object].
+	 * @param array $paths An array of JSON Pointers to the relevant attribute(s) within the associated resource(s) in the request document. Each path MUST be relative to the resource path(s) expressed in the error object's "links" member [e.g. ["/first-name", "/last-name"] to reference a couple attributes].
 	 */
 	public function __construct(
 		$title = 'Unauthorized Access',
 		$detail = 'Access to the requested resource is denied by the Permissions on your account.',
-		$code = 403,
+		$status = 403,
+		$id = null,
 		$href = null,
-		$id = null
+		$links = null,
+		$paths = null
 	) {
-		parent::__construct($title, $detail, $code, $href, $id);
+		parent::__construct($title, $detail, $status, $id, $href, $links, $paths);
 	}
 
 }
@@ -196,20 +107,24 @@ class StatelessAuthMissingMethodException extends StatelessAuthException {
 	/**
 	 * Constructs a new instance of the StatelessAuthMissingMethodException
 	 *
-	 * @param string $title The title of the exception.
-	 * @param string $detail A detailed human readable message.
-	 * @param int $code The http status code of the error.
-	 * @param string $href A URI that MAY yield further details about this particular occurrence of the problem.
+	 * @param string $title The title of the exception, passed to parent CakeException::__construct
+	 * @param string $detail A human-readable explanation specific to this occurrence of the problem.
+	 * @param int $status The http status code of the error, passed to parent CakeException::__construct
 	 * @param string $id A unique identifier for this particular occurrence of the problem.
+	 * @param string $href A URI that MAY yield further details about this particular occurrence of the problem.
+	 * @param array $links An array of JSON Pointers [RFC6901] to the associated resource(s) within the request document [e.g. ["/data"] for a primary data object].
+	 * @param array $paths An array of JSON Pointers to the relevant attribute(s) within the associated resource(s) in the request document. Each path MUST be relative to the resource path(s) expressed in the error object's "links" member [e.g. ["/first-name", "/last-name"] to reference a couple attributes].
 	 */
 	public function __construct(
 		$title = 'Missing Method',
 		$detail = 'Missing Method',
-		$code = 500,
+		$status = 500,
+		$id = null,
 		$href = null,
-		$id = null
+		$links = null,
+		$paths = null
 	) {
-		parent::__construct($title, $detail, $code, $href, $id);
+		parent::__construct($title, $detail, $status, $id, $href, $links, $paths);
 	}
 
 }

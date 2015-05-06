@@ -122,11 +122,30 @@ If you wish for all authenticated Users to have access to all methods, you can p
 
 Alternatively, you can supply your own authorization object to perform the appropriate checks yourself. See Cake's cookbook section on [Authorization](http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#authorization) for details.
 
+## Error and Exception Handling Setup
 
-### Errors and Exceptions
+Errors and Exceptions are handled via a separate CakePHP plugin, 
+included via Composer: [SerializersErrors](https://github.com/loadsys/CakePHP-Serializers-Errors)
 
-Some classes in this plugin throw custom exceptions instead of the typical `return false;`. This is meant to aid in communicating failures and make rendering errors in a specific format (such as json) easier to handle.
+Please read the documentation there for more information on the specifics.
 
+Modify your `app/Config/core.php` file to use the Custom Exceptions/Error
+handling in SerializersErrors.
+
+``` php
+Configure::write('Exception', array(
+	'handler' => 'ErrorHandler::handleException',
+	'renderer' => 'SerializersErrors.SerializerExceptionRenderer',
+	'log' => true,
+));
+```
+
+This does two things:
+
+* Errors and Exceptions get output as correctly formatted JSON API, JSON or HTML 
+depending on the request type
+* Allows the use of Custom Exceptions that match Ember Data exceptions for error cases
+* The classes in this plugin use this format to enable easier use for API Authentication Handling
 
 ### Swapping authentication and authorization objects
 

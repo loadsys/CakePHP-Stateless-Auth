@@ -1,14 +1,16 @@
 <?php
-// test classes for mocking
-//require_once dirname(dirname(dirname(dirname(__FILE__)))) . DS . "test_classes.php";
-
-App::uses('StatelessAuthException', 'StatelessAuth.Lib/Error');
+/**
+ * Tests the StandardJsonApiExceptions Classes to ensure it matches the expected
+ * format
+ *
+ * @package StatelessAuth.Test.Case.Lib.Error
+ */
+App::import('Lib/Error', 'StatelessAuth.StatelessAuthException');
 
 /**
- * Exceptions tests
- *
+ * StandardJsonApiExceptionsTest
  */
-class StatelessAuthExceptionsTest extends CakeTestCase {
+class StatelessAuthExceptionTest extends CakeTestCase {
 
 	/**
 	 * setUp
@@ -29,220 +31,263 @@ class StatelessAuthExceptionsTest extends CakeTestCase {
 	}
 
 	/**
-	 * Confirm that all Exception constructors set provided args into the
-	 * correct properties. As a side-effect, also tests the getter methods
-	 * for all properties.
+	 * Confirm that the construct sets our values properly
 	 *
-	 * @param  string $class The Exception class name to instantiate.
-	 * @param	array	$args An array of args to pass to the constructor method.
-	 * @param  array $expected The expected properties of the Exception class
-	 * @param  string $msg Optional PHPUnit error message when the assertion fails.
 	 * @return void
-	 * @dataProvider	provideTestConstructorsArgs
 	 */
-	public function testExceptionConstructors($class, $args, $expected, $msg = 'The method ::%1$s() is expected to return the value `%2$s`.') {
-		extract($args);
-		$e = new $class($title, $detail, $code, $href, $id);
-		foreach ($expected as $method => $value) {
-			if (is_array($value)) {
-				$this->assertEquals(
-					$value,
-					$e->{$method}(),
-					sprintf($msg, $method, implode($value, ", "))
-				);
-			} else {
-				$this->assertEquals(
-					$value,
-					$e->{$method}(),
-					sprintf($msg, $method, $value)
-				);
-			}
-		}
-	}
+	public function testStatelessAuthExceptionConstructor() {
+		$title = "New Title";
+		$detail = "Custom detail message";
+		$status = 406;
+		$id = "13242134-456657-asdfasdf";
+		$href = 'https://www.asdfasdfasdf.com/';
+		$links = array('link' => 'link');
+		$paths = array('something' => 'something');
 
-	/**
-	 * Provide sets of [exception class name, constructor args, expected, msg] sets
-	 * to testExceptionConstructors();
-	 *
-	 * @return array data inputs to testExceptionConstructors
-	 */
-	public function provideTestConstructorsArgs() {
-		return array(
-			array(
-				'StatelessAuthException', // Exception class to instantiate.
-				array( // Args to pass to constructor.
-					'title' => 'Stateless Auth Exception',
-					'detail' => 'Stateless Auth Exception',
-					'code' => 400,
-					'href' => '/right/here/right/now',
-					'id' => 'a14d2c0c-c9d1-11e4-ba2d-080027506c76',
-				),
-				array( // Getter methods to run and expected values.
-					'getTitle' => 'Stateless Auth Exception',
-					'getDetail' => 'Stateless Auth Exception',
-					'getCode' => 400,
-					'getHref' => '/right/here/right/now',
-					'getId' => 'a14d2c0c-c9d1-11e4-ba2d-080027506c76',
-				),
-				// optional phpunit assertion failed message here
-			),
+		$exception = new StatelessAuthException(
+			$title,
+			$detail,
+			$status,
+			$id,
+			$href,
+			$links,
+			$paths
+		);
 
-			array(
-				'StatelessAuthException',
-				array(
-					'title' => 'a title',
-					'detail' => 'some detail',
-					'code' => 444,
-					'href' => '/right/here/right/now',
-					'id' => 'a14d2c0c-c9d1-11e4-ba2d-080027506c76',
-				),
-				array(
-					'getTitle' => 'a title',
-					'getDetail' => 'some detail',
-					'getCode' => 444,
-					'getHref' => '/right/here/right/now',
-					'getId' => 'a14d2c0c-c9d1-11e4-ba2d-080027506c76',
-				),
-			),
+		$this->assertInstanceOf('StatelessAuthException', $exception);
+		$this->assertInstanceOf('BaseSerializerException', $exception);
+		$this->assertInstanceOf('CakeException', $exception);
 
-			array(
-				'StatelessAuthUnauthorizedException',
-				array(
-					'title' => 'Unauthorized Access',
-					'detail' => 'Unauthorized Access',
-					'code' => 401,
-					'href' => '/right/here/right/now',
-					'id' => 'a14d2c0c-c9d1-11e4-ba2d-080027506c76',
-				),
-				array(
-					'getTitle' => 'Unauthorized Access',
-					'getDetail' => 'Unauthorized Access',
-					'getCode' => 401,
-					'getHref' => '/right/here/right/now',
-					'getId' => 'a14d2c0c-c9d1-11e4-ba2d-080027506c76',
-				),
-			),
-
-			array(
-				'StatelessAuthForbiddenByPermissionsException',
-				array(
-					'title' => 'Unauthorized Access',
-					'detail' => 'Access to the requested resource is denied by the Permissions on your account.',
-					'code' => 403,
-					'href' => '/right/here/right/now',
-					'id' => 'a14d2c0c-c9d1-11e4-ba2d-080027506c76',
-				),
-				array(
-					'getTitle' => 'Unauthorized Access',
-					'getDetail' => 'Access to the requested resource is denied by the Permissions on your account.',
-					'getCode' => 403,
-					'getHref' => '/right/here/right/now',
-					'getId' => 'a14d2c0c-c9d1-11e4-ba2d-080027506c76',
-				),
-			),
-
-			array(
-				'StatelessAuthMissingMethodException',
-				array(
-					'title' => 'Missing Method',
-					'detail' => 'Missing Method',
-					'code' => 500,
-					'href' => '/right/here/right/now',
-					'id' => 'a14d2c0c-c9d1-11e4-ba2d-080027506c76',
-				),
-				array(
-					'getTitle' => 'Missing Method',
-					'getDetail' => 'Missing Method',
-					'getCode' => 500,
-					'getHref' => '/right/here/right/now',
-					'getId' => 'a14d2c0c-c9d1-11e4-ba2d-080027506c76',
-				),
-			),
+		$this->assertEquals(
+			$title,
+			$exception->title,
+			"Title does not match {$title}"
+		);
+		$this->assertEquals(
+			$detail,
+			$exception->detail,
+			"Detail does not match {$detail}"
+		);
+		$this->assertEquals(
+			$status,
+			$exception->status,
+			"Status does not match {$status}"
+		);
+		$this->assertEquals(
+			$id,
+			$exception->id,
+			"Id does not match {$id}"
+		);
+		$this->assertEquals(
+			$href,
+			$exception->href,
+			"Href does not match {$href}"
+		);
+		$this->assertEquals(
+			$links,
+			$exception->links,
+			"Links does not match our expectation"
+		);
+		$this->assertEquals(
+			$paths,
+			$exception->paths,
+			"Paths does not match expectation"
 		);
 	}
 
 	/**
-	 * Confirm that all Exception constructors set default args into the
-	 * correct properties. As a side-effect, also tests the getter methods
-	 * for all properties.
+	 * Confirm that the construct sets our values properly
 	 *
-	 * @param  string $class The Exception class name to instantiate.
-	 * @param  array $expected The expected properties of the Exception class
-	 * @param  string $msg Optional PHPUnit error message when the assertion fails.
 	 * @return void
-	 * @dataProvider	provideTestConstructorsDefaultValues
 	 */
-	public function testExceptionConstructorsDefaultValues($class, $expected, $msg = 'The method ::%1$s() is expected to return the value `%2$s`.') {
-		$e = new $class();
-		foreach ($expected as $method => $value) {
-			if (is_array($value)) {
-				$this->assertEquals(
-					$value,
-					$e->{$method}(),
-					sprintf($msg, $method, implode($value, ", "))
-				);
-			} else {
-				$this->assertEquals(
-					$value,
-					$e->{$method}(),
-					sprintf($msg, $method, $value)
-				);
-			}
-		}
+	public function testStatelessAuthUnauthorizedExceptionConstructor() {
+		$title = "New Title";
+		$detail = "Custom detail message";
+		$status = 406;
+		$id = "13242134-456657-asdfasdf";
+		$href = 'https://www.asdfasdfasdf.com/';
+		$links = array('link' => 'link');
+		$paths = array('something' => 'something');
+
+		$exception = new StatelessAuthUnauthorizedException(
+			$title,
+			$detail,
+			$status,
+			$id,
+			$href,
+			$links,
+			$paths
+		);
+
+		$this->assertInstanceOf('StatelessAuthUnauthorizedException', $exception);
+		$this->assertInstanceOf('BaseSerializerException', $exception);
+		$this->assertInstanceOf('CakeException', $exception);
+
+		$this->assertEquals(
+			$title,
+			$exception->title,
+			"Title does not match {$title}"
+		);
+		$this->assertEquals(
+			$detail,
+			$exception->detail,
+			"Detail does not match {$detail}"
+		);
+		$this->assertEquals(
+			$status,
+			$exception->status,
+			"Status does not match {$status}"
+		);
+		$this->assertEquals(
+			$id,
+			$exception->id,
+			"Id does not match {$id}"
+		);
+		$this->assertEquals(
+			$href,
+			$exception->href,
+			"Href does not match {$href}"
+		);
+		$this->assertEquals(
+			$links,
+			$exception->links,
+			"Links does not match our expectation"
+		);
+		$this->assertEquals(
+			$paths,
+			$exception->paths,
+			"Paths does not match expectation"
+		);
 	}
 
 	/**
-	 * Provide sets of [exception class name, expected, msg] sets
-	 * to testExceptionConstructorsDefaultValues();
+	 * Confirm that the construct sets our values properly
 	 *
-	 * @return array data inputs to testExceptionConstructorsDefaultValues
+	 * @return void
 	 */
-	public function provideTestConstructorsDefaultValues() {
-		return array(
-			array(
-				'StatelessAuthException', // Exception class to instantiate.
-				array( // Getter methods to run and expected values.
-					'getTitle' => 'Stateless Auth Exception',
-					'getDetail' => 'Stateless Auth Exception',
-					'getCode' => 400,
-					'getHref' => null,
-					'getId' => null,
-				),
-				// optional phpunit assertion failed message here
-			),
+	public function testStatelessAuthForbiddenByPermissionsExceptionConstructor() {
+		$title = "New Title";
+		$detail = "Custom detail message";
+		$status = 406;
+		$id = "13242134-456657-asdfasdf";
+		$href = 'https://www.asdfasdfasdf.com/';
+		$links = array('link' => 'link');
+		$paths = array('something' => 'something');
 
-			array(
-				'StatelessAuthUnauthorizedException',
-				array(
-					'getTitle' => 'Unauthorized Access',
-					'getDetail' => 'Unauthorized Access',
-					'getCode' => 401,
-					'getHref' => null,
-					'getId' => null,
-				),
-			),
+		$exception = new StatelessAuthForbiddenByPermissionsException(
+			$title,
+			$detail,
+			$status,
+			$id,
+			$href,
+			$links,
+			$paths
+		);
 
-			array(
-				'StatelessAuthForbiddenByPermissionsException',
-				array(
-					'getTitle' => 'Unauthorized Access',
-					'getDetail' => 'Access to the requested resource is denied by the Permissions on your account.',
-					'getCode' => 403,
-					'getHref' => null,
-					'getId' => null,
-				),
-			),
+		$this->assertInstanceOf('StatelessAuthForbiddenByPermissionsException', $exception);
+		$this->assertInstanceOf('BaseSerializerException', $exception);
+		$this->assertInstanceOf('CakeException', $exception);
 
-			array(
-				'StatelessAuthMissingMethodException',
-				array(
-					'getTitle' => 'Missing Method',
-					'getDetail' => 'Missing Method',
-					'getCode' => 500,
-					'getHref' => null,
-					'getId' => null,
-				),
-			),
+		$this->assertEquals(
+			$title,
+			$exception->title,
+			"Title does not match {$title}"
+		);
+		$this->assertEquals(
+			$detail,
+			$exception->detail,
+			"Detail does not match {$detail}"
+		);
+		$this->assertEquals(
+			$status,
+			$exception->status,
+			"Status does not match {$status}"
+		);
+		$this->assertEquals(
+			$id,
+			$exception->id,
+			"Id does not match {$id}"
+		);
+		$this->assertEquals(
+			$href,
+			$exception->href,
+			"Href does not match {$href}"
+		);
+		$this->assertEquals(
+			$links,
+			$exception->links,
+			"Links does not match our expectation"
+		);
+		$this->assertEquals(
+			$paths,
+			$exception->paths,
+			"Paths does not match expectation"
 		);
 	}
+
+	/**
+	 * Confirm that the construct sets our values properly
+	 *
+	 * @return void
+	 */
+	public function testStatelessAuthMissingMethodExceptionConstructor() {
+		$title = "New Title";
+		$detail = array("something" => "Custom detail message");
+		$status = 406;
+		$id = "13242134-456657-asdfasdf";
+		$href = 'https://www.asdfasdfasdf.com/';
+		$links = array('link' => 'link');
+		$paths = array('something' => 'something');
+
+		$exception = new StatelessAuthMissingMethodException(
+			$title,
+			$detail,
+			$status,
+			$id,
+			$href,
+			$links,
+			$paths
+		);
+
+		$this->assertInstanceOf('StatelessAuthMissingMethodException', $exception);
+		$this->assertInstanceOf('BaseSerializerException', $exception);
+		$this->assertInstanceOf('CakeException', $exception);
+
+		$this->assertEquals(
+			$title,
+			$exception->title,
+			"Title does not match {$title}"
+		);
+		$this->assertEquals(
+			$detail,
+			$exception->detail,
+			"The exception `detail` property does not match what we passed"
+		);
+		$this->assertEquals(
+			$status,
+			$exception->status,
+			"Status does not match {$status}"
+		);
+		$this->assertEquals(
+			$id,
+			$exception->id,
+			"Id does not match {$id}"
+		);
+		$this->assertEquals(
+			$href,
+			$exception->href,
+			"Href does not match {$href}"
+		);
+		$this->assertEquals(
+			$links,
+			$exception->links,
+			"Links does not match our expectation"
+		);
+		$this->assertEquals(
+			$paths,
+			$exception->paths,
+			"Paths does not match expectation"
+		);
+	}
+
 }
