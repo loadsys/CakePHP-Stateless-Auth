@@ -60,37 +60,37 @@ class StatelessAuthExceptionTest extends CakeTestCase {
 
 		$this->assertEquals(
 			$title,
-			$exception->title,
+			$exception->title(),
 			"Title does not match {$title}"
 		);
 		$this->assertEquals(
 			$detail,
-			$exception->detail,
+			$exception->detail(),
 			"Detail does not match {$detail}"
 		);
 		$this->assertEquals(
 			$status,
-			$exception->status,
+			$exception->status(),
 			"Status does not match {$status}"
 		);
 		$this->assertEquals(
 			$id,
-			$exception->id,
+			$exception->id(),
 			"Id does not match {$id}"
 		);
 		$this->assertEquals(
 			$href,
-			$exception->href,
+			$exception->href(),
 			"Href does not match {$href}"
 		);
 		$this->assertEquals(
 			$links,
-			$exception->links,
+			$exception->links(),
 			"Links does not match our expectation"
 		);
 		$this->assertEquals(
 			$paths,
-			$exception->paths,
+			$exception->paths(),
 			"Paths does not match expectation"
 		);
 	}
@@ -125,37 +125,37 @@ class StatelessAuthExceptionTest extends CakeTestCase {
 
 		$this->assertEquals(
 			$title,
-			$exception->title,
+			$exception->title(),
 			"Title does not match {$title}"
 		);
 		$this->assertEquals(
 			$detail,
-			$exception->detail,
+			$exception->detail(),
 			"Detail does not match {$detail}"
 		);
 		$this->assertEquals(
 			$status,
-			$exception->status,
+			$exception->status(),
 			"Status does not match {$status}"
 		);
 		$this->assertEquals(
 			$id,
-			$exception->id,
+			$exception->id(),
 			"Id does not match {$id}"
 		);
 		$this->assertEquals(
 			$href,
-			$exception->href,
+			$exception->href(),
 			"Href does not match {$href}"
 		);
 		$this->assertEquals(
 			$links,
-			$exception->links,
+			$exception->links(),
 			"Links does not match our expectation"
 		);
 		$this->assertEquals(
 			$paths,
-			$exception->paths,
+			$exception->paths(),
 			"Paths does not match expectation"
 		);
 	}
@@ -190,37 +190,37 @@ class StatelessAuthExceptionTest extends CakeTestCase {
 
 		$this->assertEquals(
 			$title,
-			$exception->title,
+			$exception->title(),
 			"Title does not match {$title}"
 		);
 		$this->assertEquals(
 			$detail,
-			$exception->detail,
+			$exception->detail(),
 			"Detail does not match {$detail}"
 		);
 		$this->assertEquals(
 			$status,
-			$exception->status,
+			$exception->status(),
 			"Status does not match {$status}"
 		);
 		$this->assertEquals(
 			$id,
-			$exception->id,
+			$exception->id(),
 			"Id does not match {$id}"
 		);
 		$this->assertEquals(
 			$href,
-			$exception->href,
+			$exception->href(),
 			"Href does not match {$href}"
 		);
 		$this->assertEquals(
 			$links,
-			$exception->links,
+			$exception->links(),
 			"Links does not match our expectation"
 		);
 		$this->assertEquals(
 			$paths,
-			$exception->paths,
+			$exception->paths(),
 			"Paths does not match expectation"
 		);
 	}
@@ -255,37 +255,37 @@ class StatelessAuthExceptionTest extends CakeTestCase {
 
 		$this->assertEquals(
 			$title,
-			$exception->title,
+			$exception->title(),
 			"Title does not match {$title}"
 		);
 		$this->assertEquals(
 			$detail,
-			$exception->detail,
+			$exception->detail(),
 			"The exception `detail` property does not match what we passed"
 		);
 		$this->assertEquals(
 			$status,
-			$exception->status,
+			$exception->status(),
 			"Status does not match {$status}"
 		);
 		$this->assertEquals(
 			$id,
-			$exception->id,
+			$exception->id(),
 			"Id does not match {$id}"
 		);
 		$this->assertEquals(
 			$href,
-			$exception->href,
+			$exception->href(),
 			"Href does not match {$href}"
 		);
 		$this->assertEquals(
 			$links,
-			$exception->links,
+			$exception->links(),
 			"Links does not match our expectation"
 		);
 		$this->assertEquals(
 			$paths,
-			$exception->paths,
+			$exception->paths(),
 			"Paths does not match expectation"
 		);
 	}
