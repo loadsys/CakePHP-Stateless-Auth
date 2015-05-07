@@ -3,6 +3,7 @@
 [![Latest Version](https://img.shields.io/github/release/loadsys/CakePHP-Stateless-Auth.svg?style=flat-square)](https://github.com/loadsys/CakePHP-Stateless-Auth/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Build Status](https://travis-ci.org/loadsys/CakePHP-Stateless-Auth.svg?branch=master&style=flat-square)](https://travis-ci.org/loadsys/CakePHP-Stateless-Auth)
+[![Coverage Status](https://coveralls.io/repos/loadsys/CakePHP-Stateless-Auth/badge.svg)](https://coveralls.io/r/loadsys/CakePHP-Stateless-Auth)
 [![Total Downloads](https://img.shields.io/packagist/dt/loadsys/cakephp-stateless-auth.svg?style=flat-square)](https://packagist.org/packages/loadsys/cakephp-stateless-auth)
 
 A replacement CakePHP Authentication/Authorization Component that is fully and strictly stateless. Designed to be used with Cake apps that are only accessed RESTfully.
